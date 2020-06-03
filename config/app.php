@@ -167,7 +167,7 @@ return [
     'watertext'=>'活动管理系统',
     'version'=>'6.0',
     'pre_pwd'=>'siging+beliwin',
-    'admin_path'    => 'http://relclothing.fuyouhome.top',
+    'admin_path'    => 'https://relclothing.fuyouhome.top',
     'APPID' => 'wx9a4aec08d28336a6',
     'SECRET' => 'cda6e5b09b9bb90f3e2b12acc7f48de8'
 ];
