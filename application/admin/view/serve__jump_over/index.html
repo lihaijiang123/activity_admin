@@ -1,0 +1,414 @@
+{include file="common/head"/}
+<style>
+	.sele {
+		height: 37px;
+		width: 200px;
+		border: 1px solid #E6E6E6;
+	}
+</style>
+<div class="admin-main layui-anim layui-anim-upbit">
+	<input type="hidden" name="pageId" value="{$pageId}" id='pageId'>
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>列表</legend>
+	</fieldset>
+
+	<!-- 不需要 -->
+	<div class="demoTable">
+		<div class="layui-inline">
+			<input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}活动标题" autocomplete="off">
+		</div>
+		<div class="layui-inline">
+			<select name="serve_type_id" lay-filter="serve_type_id" id="serve_type_id" lay-verify="required"
+				xm-select="serve_type_id" xm-select-max="1" xm-select-search="">
+				<option value="">请选择所属活动类型</option>
+				{foreach $serve_type_id_array as $key=>$val }
+				<option value="{$val.id}"> {$val.title} </option>
+				{/foreach}
+			</select>
+		</div>
+
+		<div class="layui-inline">
+			<select name="city" lay-filter="city" lay-verify="required" id="city" xm-select="city" xm-select-max="1"
+				xm-select-search="">
+				<option value="">请选择举办城市</option>
+				{foreach $city_arr as $key=>$val }
+				<option value="{$val.id}"> {$val.city} </option>
+				{/foreach}
+			</select>
+		</div>
+		<button class="layui-btn" id="search" data-type="reload">搜索</button>
+		<a href="{:url('index')}" class="layui-btn">显示全部</a>
+	</div>
+	<!-- 不需要 -->
+
+
+	<table class="layui-table" id="list" lay-filter="list"></table>
+
+</div>
+
+<!-- 需要（编辑的方法名称 主键id 的名称 start-->
+<script type="text/html" id="action">
+	<a href="{:url('edit')}?id={{d.id}}&page={{d.page}}" class="layui-btn layui-btn-xs" id="edit_btn" data-page="{{d.page}}" data-id="{{d.id}}">编辑</a>    <!-- 主键 -->
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!-- 需要（编辑的方法名称 主键id 的名称 end-->
+
+
+
+<!-- 需要 添加的方法名称 按钮的的title -->
+<script type="text/html" id="topBtn">
+	<!-- <a href="{:url('add')}" class="layui-btn  layui-btn-sm" >添加</a> -->
+<a href="{:url('add')}" class="layui-btn  layui-btn-sm" id="add_btn">添加</a>
+</script>
+<!-- 需要 添加的方法名称 按钮的的title -->
+
+
+
+<script type="text/html" id="pic"> <img src="{{d.pic}}" /></script>
+
+<script type="text/html"
+	id="status"><input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="status" {{ d.status == 1 ? "checked" : "" }}></script>
+
+<script type="text/html"
+	id="pay_mode"><input type="checkbox" name="pay_mode" value="{{d.id}}" lay-skin="switch" lay-text="付费|免费" lay-filter="pay_mode" {{ d.pay_mode == 1 ? "checked" : "" }}></script>
+
+<script type="text/html"
+	id="hold_mode"><input type="checkbox" name="hold_mode" value="{{d.id}}" lay-skin="switch" lay-text="线上|线下" lay-filter="hold_mode" {{ d.hold_mode == 1 ? "checked" : "" }}></script>
+
+<script type="text/html"
+	id="is_hot"><input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_hot" {{ d.is_hot == 1 ? "checked" : "" }}></script>
+
+
+
+{include file="common/foot"/}
+
+<link href="/static/common/css/formSelects-v4.css" rel="stylesheet" />
+<script>
+	layui.config({
+		base: '/static/common/js/' //此处路径请自行处理, 可以使用绝对路径
+	}).extend({
+		formSelects: 'formSelects-v4'
+	});
+
+	layui.use(['table', 'form', 'formSelects'], function () {
+
+		var table = layui.table,
+			form = layui.form,
+			$ = layui.jquery;
+
+		var pageId = $('#pageId').val();
+
+		var formSelects = layui.formSelects;
+		formSelects.btns('serve_type_id', []);
+		formSelects.btns('city', []);
+		var exportData = '';
+		var tableIn = table.render({
+			id: 'user',
+			elem: '#list',
+			url: '{:url("index")}',
+			method: 'post',
+			toolbar: '#topBtn',
+			totalRow: true,
+			page: { curr: pageId },
+			cols: [
+				[
+
+					{
+						field: 'id',
+						title: 'ID',
+						width: 80
+					},
+
+					{
+						field: 'serve_type_id',
+						title: '所属活动类型',
+						width: 150
+					},
+
+					{
+						field: 'title',
+						title: '活动标题',
+						width: 200
+					},
+
+					{
+						field: 'pic',
+						align: 'center',
+						title: '活动图片',
+						width: 120,
+						toolbar: '#pic'
+					},
+
+					{
+						field: 'begin_time',
+						title: '开始时间',
+						width: 150
+					},
+
+					{
+						field: 'end_time',
+						title: '结束时间',
+						width: 150
+					},
+
+					{
+						field: 'search_city',
+						title: '举办城市',
+						width: 100
+					},
+
+					{
+						field: 'status',
+						align: 'center',
+						title: '是否显示',
+						width: 120,
+						toolbar: '#status'
+					},
+
+					{
+						field: 'pay_mode',
+						align: 'center',
+						title: '收费方式',
+						width: 120,
+						toolbar: '#pay_mode'
+					},
+
+					{
+						field: 'hold_mode',
+						align: 'center',
+						title: '举办方式',
+						width: 120,
+						toolbar: '#hold_mode'
+					},
+
+					{
+						field: 'is_hot',
+						align: 'center',
+						title: '是否推荐到首页',
+						width: 150,
+						toolbar: '#is_hot'
+					},
+
+					{
+						width: 160,
+						align: 'center',
+						toolbar: '#action'
+					}
+
+				]
+			],
+			limit: 10, //每页默认显示的数量
+			done: function (res, curr, count) {
+
+				// $("#pageId").val(curr);
+				$("#pageId").attr('value',curr);
+
+
+				console.log(res);
+				// console.log(curr);
+				// console.log(count);
+				exportData = res.data; //获取表格中的数据集合。
+				// setTimeout(function () {
+				// 	if (sessionStorage.getItem('now_page')) {
+				// 		sessionStorage.removeItem('now_page');
+				// 	}else {
+				// 		sessionStorage.setItem('now_page', curr);
+				// 	}
+				// }, 1000)
+			},
+		});
+
+		//搜索
+		$('#search').on('click', function () {
+			var key = $('#key').val();
+			// 活动类型
+			var serve_type_id = formSelects.value('serve_type_id').length == 0 ? '' : formSelects.value('serve_type_id')[0].name;
+			// 城市
+			var city = formSelects.value('city').length == 0 ? '' : formSelects.value('city')[0].name;
+
+			if ($.trim(key) === '' && $.trim(serve_type_id) === '' && $.trim(city) === '') {
+				layer.msg('{:lang("pleaseEnter")}关键字', {
+					icon: 0
+				});
+				return false;
+			}
+
+			tableIn.reload({
+				page: {
+					page: 1
+				},
+				where: {
+					key: key,
+					serve_type_id: serve_type_id,
+					city: city
+				}
+			});
+		});
+
+
+		// 点击添加按钮
+		// $("#add_btn").click(function () {
+		// 	// console.log(1111);
+		// 	// return false;
+		// 	var index = layer.open({
+		// 		type: 2,
+		// 		content: './add.html', //这里content是一个普通的String
+		// 		shade: true,
+		// 		maxmin: true,
+		// 		area: ['90%', '90%']
+		// 	});
+		// });
+
+		// 点击修改按钮
+		// $(".layui-table-main").on('click', "#edit_btn", function (e) {
+		// 	var id = $(this).parents('tr').children().eq(0).text();
+		// 	var page = $(this).attr('data-page');
+		// 	// console.log('./edit.html?id=' + id + '&page=' + page);
+
+		// 	var index = layer.open({
+		// 		type: 2,
+		// 		content: './edit.html?id=' + id + '&page=' + page, //这里content是一个普通的String
+		// 		shade: true,
+		// 		maxmin: true,
+		// 		area: ['90%', '90%'],
+		// 		yes: function (index, layero) {
+		// 			console.log(index, layero);
+		// 		},
+		// 		cancel: function () {
+		// 			// console.log(sessionStorage.getItem(''))
+		// 			console.log(1);
+		// 		}
+		// 	});
+
+
+		// });
+
+		table.on('tool(list)', function (obj) {
+			var data = obj.data;
+			if (obj.event === 'del') {
+				layer.confirm('您确定要删除这条信息吗？', function (index) {
+					var loading = layer.load(1, {
+						shade: [0.1, '#fff']
+					});
+					$.post("{:url('Del')}", {
+						id: data.id
+					}, function (res) { //主键
+						layer.close(loading);
+						if (res.code === 1) {
+							layer.msg(res.msg, {
+								time: 1000,
+								icon: 1
+							});
+							tableIn.reload();
+						} else {
+							layer.msg('操作失败！', {
+								time: 1000,
+								icon: 2
+							});
+						}
+					});
+					layer.close(index);
+				});
+			}
+		});
+
+		form.on('switch(pay_mode)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				pay_mode: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+		form.on('switch(hold_mode)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				hold_mode: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+		form.on('switch(is_hot)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				is_hot: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+		form.on('switch(status)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				status: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+
+
+
+	});
+</script>
+</body>
+
+</html>

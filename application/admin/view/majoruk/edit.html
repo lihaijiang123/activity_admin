@@ -1,0 +1,311 @@
+{include file="common/head"/}
+ <script src="//unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>修改专业</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        
+        
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属学科</label>
+            <div class="layui-input-4">
+                <select name="subject_id" lay-verify="required" >
+                    {foreach $subject_list as $key=>$val } 
+                        <option value="{$val.id}" {eq name="$info_array['subject_id']" value="$val.id"} selected {/eq}>{$val.subject_name}</option>
+                    {/foreach}
+                </select>
+            </div>
+    </div>
+
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"> 专业名 </label>
+        <div class="layui-input-4">
+            <input type="text" name="major_name" ng-model="field.major_name" lay-verify="required"  class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item fieldName">  
+      <label class="layui-form-label">专业排名</label> 
+      <input type="hidden" class="major_rank"  name="major_rank" >
+      <div class="layui-input-block"> 
+         <div class="layui-upload">
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
+           <div class="layui-upload-list"> 
+              <img class="layui-upload-img" id="major_rank" >
+                <p class="demoText" ></p> 
+            </div>
+         </div> 
+      </div>
+  </div>
+
+    <div class="layui-form-item fieldName">  
+      <label class="layui-form-label">专业分析</label> 
+      <input type="hidden" class="major_list"  name="major_list" >
+      <div class="layui-input-block"> 
+         <div class="layui-upload">
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
+           <div class="layui-upload-list"> 
+              <img class="layui-upload-img" id="major_list" >
+                <p class="demoText" ></p> 
+            </div>
+         </div> 
+      </div>
+  </div>
+
+
+    <div class="layui-form-item fieldName">  
+      <label class="layui-form-label">精选院校</label> 
+      <input type="hidden" class="major_choice_school"  name="major_choice_school" >
+      <div class="layui-input-block"> 
+         <div class="layui-upload">
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
+           <div class="layui-upload-list"> 
+              <img class="layui-upload-img" id="major_choice_school" >
+                <p class="demoText" ></p> 
+            </div>
+         </div> 
+      </div>
+  </div>
+
+    <div class="layui-form-item fieldName">  
+      <label class="layui-form-label">我的母校</label> 
+      <input type="hidden" class="major_alma_mater"  name="major_alma_mater" >
+      <div class="layui-input-block"> 
+         <div class="layui-upload">
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
+           <div class="layui-upload-list"> 
+              <img class="layui-upload-img" id="major_alma_mater" >
+                <p class="demoText" ></p> 
+            </div>
+         </div> 
+      </div>
+  </div>
+
+    <div class="layui-form-item fieldName">  
+      <label class="layui-form-label">美国名校</label> 
+      <input type="hidden" class="major_prestigious_school"  name="major_prestigious_school" >
+      <div class="layui-input-block"> 
+         <div class="layui-upload">
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
+           <div class="layui-upload-list"> 
+              <img class="layui-upload-img" id="major_prestigious_school" >
+                <p class="demoText" ></p> 
+            </div>
+         </div> 
+      </div>
+  </div>
+
+    <div class="layui-form-item fieldName">  
+      <label class="layui-form-label">精选案例</label> 
+      <input type="hidden" class="major_selected_case"  name="major_selected_case" >
+      <div class="layui-input-block"> 
+         <div class="layui-upload">
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
+           <div class="layui-upload-list"> 
+              <img class="layui-upload-img" id="major_selected_case" >
+                <p class="demoText" ></p> 
+            </div>
+         </div> 
+      </div>
+  </div>
+
+
+    
+
+
+    <div class="layui-form-item">
+          <label class="layui-form-label">专业介绍</label>
+          <div class="layui-input-4">
+              <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
+              <script id="major_introduce" name="major_introduce" type="text/plain"><?=$info_array['major_introduce']?></script>
+          </div>
+    </div>
+
+      <div class="layui-form-item">
+          <label class="layui-form-label">申请特点</label>
+          <div class="layui-input-4">
+              <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
+              <script id="apply_content" name="apply_content" type="text/plain"><?=$info_array['apply_content']?></script>
+          </div>
+    </div>
+     <div class="layui-form-item">
+          <label class="layui-form-label">申请要求</label>
+          <div class="layui-input-4">
+              <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
+              <script id="apply_claim" name="apply_claim" type="text/plain"><?=$info_array['apply_claim']?></script>
+          </div>
+    </div>
+
+    <div class="layui-form-item">
+          <label class="layui-form-label">课程设置</label>
+          <div class="layui-input-4">
+              <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
+              <script id="course_set" name="course_set" type="text/plain"><?=$info_array['course_set']?></script>
+          </div>
+    </div>
+    <div class="layui-form-item">
+          <label class="layui-form-label">就业指导</label>
+          <div class="layui-input-4">
+              <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
+              <script id="job_guidance" name="job_guidance" type="text/plain"><?=$info_array['job_guidance']?></script>
+          </div>
+    </div>
+
+
+    
+
+   
+
+    <div class="layui-form-item">
+        <label class="layui-form-label"> 排序 </label>
+        <div class="layui-input-4">
+            <input type="text" name="sort" ng-model="field.sort" lay-verify="required"  class="layui-input">
+        </div>
+    </div>
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">状态</label>
+        <div class="layui-input-4">
+            <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==1" ng-value="1" title="启用">
+            <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==2" ng-value="2" title="未启用">
+        </div>
+    </div>
+
+        
+        
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a>
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+
+ 
+<script src="/static/common/js/angular.min.js"></script>
+<script>
+    
+       UE.getEditor('apply_content',{
+        initialFrameWidth : 800,
+        initialFrameHeight: 200
+    });
+        UE.getEditor('apply_claim',{
+        initialFrameWidth : 800,
+        initialFrameHeight: 200
+    });
+    UE.getEditor('course_set',{
+        initialFrameWidth : 800,
+        initialFrameHeight: 200
+    });
+    UE.getEditor('job_guidance',{
+        initialFrameWidth : 800,
+        initialFrameHeight: 200
+    });
+    UE.getEditor('major_introduce',{
+        initialFrameWidth : 800,
+        initialFrameHeight: 200
+    });
+       
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        $scope.field = {$info|raw};
+        layui.use(['form','upload', 'layer','layedit'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery,upload = layui.upload,layedit = layui.layedit;
+             
+               
+             var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_introduce").attr("src",info.major_introduce); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_introduce").attr("value",info.major_introduce); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_rank").attr("src",info.major_rank); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_rank").attr("value",info.major_rank); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_list").attr("src",info.major_list); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_list").attr("value",info.major_list); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_confirm").attr("src",info.major_confirm); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_confirm").attr("value",info.major_confirm); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_choice_school").attr("src",info.major_choice_school); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_choice_school").attr("value",info.major_choice_school); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_alma_mater").attr("src",info.major_alma_mater); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_alma_mater").attr("value",info.major_alma_mater); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_prestigious_school").attr("src",info.major_prestigious_school); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_prestigious_school").attr("value",info.major_prestigious_school); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $("#major_selected_case").attr("src",info.major_selected_case); } 
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".major_selected_case").attr("value",info.major_selected_case); } 
+
+              
+             
+
+            form.on('submit(submit)', function (data) {
+
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                data.field.major_id = $scope.field.major_id;
+                 //获取编辑器的内容
+                $.post("", data.field, function (res) {
+                    console.log(res);
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            location.href = res.url;
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            })
+
+
+               
+    var uploadInst = upload.render({ 
+            elem: ".uploadImg" ,
+            url: "{:url("UpFiles/file")}" ,
+            before: function(obj){
+              var _this = this;
+              obj.preview(function(index, file, result){
+                   _this.item.parents(".fieldName").find("img").attr("src",result)
+              });  
+            },
+            done: function(res){ 
+                if(res.code>0){ 
+                  this.item.parents(".fieldName").find("input[type=hidden]").val(res.url)
+                }else{ 
+                  return layer.msg("上传失败");
+                } 
+            } ,
+              error: function(res){ 
+                var demoText = this.item.parents(".fieldName").find(".demoText");
+                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');  
+                 demoText.find(".demo-reload").on("click", function(){  
+                  uploadInst.upload(); 
+                });
+              }
+        });
+
+
+                
+        });
+    });
+
+
+    // 时间插件shi-jian-cha-jian
+    
+    function useLayDateMultiple(cls) {
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            lay('#' + cls).each(function() {
+                laydate.render({
+                    elem : this,
+                    trigger : 'click'
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>
