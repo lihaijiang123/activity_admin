@@ -1,0 +1,165 @@
+{include file="common/head"/}
+
+<script src="//unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+<style>
+    .layui-text em, .layui-word-aux{
+        color: red !important;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>修改</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动内容</label>
+            <div class="controls layui-input-4" >
+                <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
+                <script id="content" name="content" type="text/plain"><?=$info?></script>
+            </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <!-- <input type="hidden" name="page" value="{$page}" id='page'> -->
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <!-- <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a> -->
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+
+<link href="/static/common/css/formSelects-v4.css" rel="stylesheet" />
+
+
+<script src="/static/common/js/angular.min.js"></script>
+<script>
+
+
+    UE.getEditor('content',{
+        initialFrameWidth : 600,
+        initialFrameHeight: 600,
+        toolbars: [['source', '|', 'undo', 'redo', '|',
+            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+            'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+            'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+            'directionalityltr', 'directionalityrtl', 'indent', '|',
+            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+            'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+            'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 'pagebreak', 'template', 'background', '|',
+            'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+            'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+            'print', 'preview', 'searchreplace', 'drafts', 'help']]
+    });
+
+
+    layui.config({
+        base: '/static/common/js/' //此处路径请自行处理, 可以使用绝对路径
+    }).extend({
+        formSelects: 'formSelects-v4'
+    });
+
+
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        // $scope.field = {$info|raw};
+        layui.use(['form','upload', 'layer','layedit','formSelects'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery,upload = layui.upload,layedit = layui.layedit;
+
+
+            // var info = {$info|raw}; form.val("form", info);  if(info){ $("#pic").attr("src",info.pic); }
+            // var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value",info.pic); }
+            //
+            // var formSelects = layui.formSelects;
+
+
+            form.on('submit(submit)', function (data) {
+
+                // 验证网址格式是否正确
+                var reg=/(^#)|(^http(s*):\/\/[^\s]+\.[^\s]+)/;
+                if( !reg.test(data.field.url) && data.field.url ){
+                    layer.msg('网址格式错误，请输入以http://或https://开头的完整url！',{icon: 5});
+                    return false;
+                }
+
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                // data.field.id = $scope.field.id;
+                //获取编辑器的内容
+                $.post("", data.field, function (res) {
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        // sessionStorage.setItem("changeData", JSON.stringify(data.field));
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(index); //再执行关闭
+                            // var page = $('#page').val();//获取分页值
+                            // location.href = res.url + '?page=1';
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            })
+
+
+
+            var uploadInst = upload.render({
+                elem: ".uploadImg" ,
+                url: "{:url("UpFiles/upload")}" ,
+                before: function(obj){
+                var _this = this;
+                obj.preview(function(index, file, result){
+                    _this.item.parents(".fieldName").find("img").attr("src",result)
+                });
+            },
+            done: function(res){
+                if(res.code>0){
+                    this.item.parents(".fieldName").find("input[type=hidden]").val(res.url)
+                }else{
+                    return layer.msg("上传失败");
+                }
+            } ,
+            error: function(res){
+                var demoText = this.item.parents(".fieldName").find(".demoText");
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                demoText.find(".demo-reload").on("click", function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+
+
+        });
+    });
+
+
+    // 时间插件shi-jian-cha-jian
+
+    useLayDateMultiple('begin_time');
+
+    useLayDateMultiple('end_time');
+
+
+    function useLayDateMultiple(cls) {
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            lay('#' + cls).each(function() {
+                laydate.render({
+                    elem : this,
+                    trigger : 'click',
+                    type : 'datetime'
+                });
+            });
+        });
+    }
+</script>
+</body>
+</html>

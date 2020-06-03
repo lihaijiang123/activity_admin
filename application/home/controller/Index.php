@@ -694,4 +694,11 @@ class Index extends Common{
         return json_msg(0,'成功',$return);
     }
 
+
+    public function help()
+    {
+        $data = Db::table('front_config')->where('name', 'help')->find();
+        return json_msg(0, '', $data);
+    }
+
 }

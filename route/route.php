@@ -35,6 +35,7 @@ return [
     '/pdetail/[:userId]/[:id]'=>'home/products/detail', //产品详情
     '/pmatching/[:userId]/[:degree]/[:gpa]/[:tfys]/[:gg]/[:bjts]'=>'home/products/matching', //匹配
     '/bannerwall/[:userId]'=>'home/bannerwall/list', //产品详情
+    '/help/[:userId]'=>'home/index/help'//客服
     // 
 
 
