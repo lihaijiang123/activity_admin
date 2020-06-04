@@ -685,7 +685,7 @@ class Index extends Common{
             $return_active_list[$key]['serve_category_id'] = $this->active_categorys[$val['serve_category_id']]['title'];
 
         }
-        array_unshift($active_types,['id'=>0,'title'=>'全部']);
+        array_unshift($active_types,['id'=>0,'title'=>'热门']);
 
         $return['active_types'] = $active_types;
         $return['banners'] = $banners;
