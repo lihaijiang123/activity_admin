@@ -362,7 +362,7 @@ body .site-demo-nav .layui-nav-item{line-height: 40px}
 	cursor: pointer;
 }
 
-.layui-input-1, .layui-input-2, .layui-input-3, .layui-input-4, .layui-input-5, .layui-input-6 {
+.layui-input-1, .layui-input-2, .layui-input-3, .layui-input-4, .layui-input-5, .layui-input-6, .layui-input-7, .layui-input-8, .layui-input-9 {
     margin-left: -1px;
     float: left;
     margin-right: 10px;
@@ -377,6 +377,9 @@ body .site-demo-nav .layui-nav-item{line-height: 40px}
 .layui-input-4{width: 40%;}
 .layui-input-5{width: 50%;}
 .layui-input-6{width: 60%;}
+.layui-input-7{width: 70%;}
+.layui-input-8{width: 80%;}
+.layui-input-9{width: 90%;}
 
 .table-responsive .layui-table {
     margin: 0;
@@ -460,7 +463,7 @@ ul.ztree>li>a>span{font-size:15px;font-weight:700}
 
   .admin-side-toggle ,.admin-header-item{display: none;}
   .admin-header-item-mobile{ display: block; }
-    .layui-input-1,.layui-input-2,.layui-input-3,.layui-input-4,.layui-input-5,.layui-input-6 {display: block;float: none;left: -3px;width: auto;margin: 0 0 10px 112px;}
+    .layui-input-1,.layui-input-2,.layui-input-3,.layui-input-4,.layui-input-5,.layui-input-6, .layui-input-7, .layui-input-8, .layui-input-9 {display: block;float: none;left: -3px;width: auto;margin: 0 0 10px 112px;}
     .table-responsive {
         width: 100%;
         margin-bottom: 15px;

@@ -9,201 +9,217 @@
     }
 </style>
 <div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
-    
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>添加</legend>
-    </fieldset>
-
     <form class="layui-form layui-form-pane">
 
-        
-  <div class="layui-form-item"> 
-    <label class="layui-form-label">所属活动类型</label> 
-    <div class="layui-input-4">
-      <select name="serve_type_id"  lay-filter="serve_type_id"  lay-verify="required"  xm-select="serve_type_id"  xm-select-search=""> 
-        <option  value="">请选择所属活动</option> 
-        {foreach $serve_type_id_array as $key=>$val } 
-            <option value="{$val.id}"> {$val.title} </option>
-        {/foreach} 
-      </select>
-    </div>
-    <div class="layui-form-mid layui-word-aux required">*</div>
-  </div>
-
-  <div class="layui-form-item"> 
-    <label class="layui-form-label">活动类别</label> 
-    <div class="layui-input-4">
-      <select name="serve_category_id"  lay-filter="serve_category_id"  lay-verify="required"  xm-select="serve_category_id"  xm-select-search="" xm-select-max="1"> 
-        <option  value="">请选择活动类别</option> 
-        {foreach $serve_category_id_array as $key=>$val } 
-            <option value="{$val.id}"> {$val.title} </option>
-        {/foreach} 
-      </select> 
-    </div>
-    <div class="layui-form-mid layui-word-aux required">*</div>
-  </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label"> 活动标题 </label>
-            <div class="layui-input-4">
-                <input type="text" name="title" ng-model="field.title" lay-verify="required" class="layui-input"
-                       autocomplete="off">
+            <label class="layui-form-label">所属活动类型</label>
+            <div class="layui-input-8">
+                <select name="serve_type_id" lay-filter="serve_type_id" lay-verify="required" xm-select="serve_type_id"
+                        xm-select-search="">
+                    <option value="">请选择所属活动</option>
+                    {foreach $serve_type_id_array as $key=>$val }
+                    <option value="{$val.id}"> {$val.title}</option>
+                    {/foreach}
+                </select>
             </div>
             <div class="layui-form-mid layui-word-aux required">*</div>
         </div>
 
-        <div class="layui-form-item fieldName">
-            <label class="layui-form-label">活动图片</label>
-            <input type="hidden" class="pic" name="pic">
-            <div class="layui-input-block">
-                <div class="layui-upload">
-                    <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
-                            class="icon icon-upload3"></i>点击上传
-                    </button>
-                    <div class="layui-upload-list">
-                        <img class="layui-upload-img" id="pic">
-                        <p class="demoText"></p>
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">活动类别</label>
+                <div class="layui-input-7">
+                    <select name="serve_category_id" lay-filter="serve_category_id" lay-verify="required"
+                            xm-select="serve_category_id" xm-select-search="" xm-select-max="1">
+                        <option value="">请选择活动类别</option>
+                        {foreach $serve_category_id_array as $key=>$val }
+                        <option value="{$val.id}"> {$val.title}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-form-mid layui-word-aux required">*</div>
+            </div>
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label"> 活动标题 </label>
+                <div class="layui-input-7">
+                    <input type="text" name="title" ng-model="field.title" lay-verify="required" class="layui-input"
+                           autocomplete="off">
+                </div>
+                <div class="layui-form-mid layui-word-aux required">*</div>
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">开始时间</label>
+                <div class="layui-input-7">
+                    <input type="text" id="begin_time" lay-verify="required" autocomplete="off" name="begin_time"
+                           value="{{d.begin_time}}" placeholder="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux required">*</div>
+            </div>
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">结束时间</label>
+                <div class="layui-input-7">
+                    <input type="text" id="end_time" lay-verify="required" autocomplete="off" name="end_time"
+                           value="{{d.end_time}}" placeholder="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux required">*</div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 浏览量 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="see_num" ng-model="field.see_num" class="layui-input" placeholder="默认值0"
+                           autocomplete="off" readonly="readonly">
+                </div>
+            </div>
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 收藏量 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="cang_num" ng-model="field.cang_num" class="layui-input"
+                           placeholder="默认值0" autocomplete="off" readonly="readonly">
+                </div>
+            </div>
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 排序 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="sort" ng-model="field.sort" class="layui-input" placeholder="默认值0"
+                           autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">举办地址</label>
+            <div class="layui-input-12">
+                <div class="layui-input-2">
+                    <select name="city" lay-filter="city" id="city" xm-select="city" xm-select-max="1"
+                            xm-select-search="">
+                        <option value="">请选择举办城市</option>
+                        {foreach $city_arr as $key=>$val }
+                        <option value="{$val.id}"> {$val.city}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-input-3">
+                    <input type="text" name="address" ng-model="field.address" class="layui-input" placeholder="详细地址"
+                           autocomplete="off">
+                </div>
+            </div>
+            <div class="layui-form-mid layui-word-aux required">线上活动该项不需要填写</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 网址 </label>
+            <div class="layui-input-8">
+                <input type="text" name="url" ng-model="field.url" class="layui-input" placeholder="请输入网址"
+                       autocomplete="off">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 组织信息 </label>
+            <div class="layui-input-8">
+                <textarea name="organ_infor" placeholder="请输入组织信息" class="layui-textarea" maxlength="500"></textarea>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md3 fieldName">
+
+                <label class="layui-form-label">活动图片</label>
+                <input type="hidden" class="pic" name="pic">
+                <div class="layui-input-block">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
+                                class="icon icon-upload3"></i>点击上传
+                        </button>
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img" id="pic">
+                            <p class="demoText"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md3 fieldName">
+                <label class="layui-form-label">分享图片</label>
+                <input type="hidden" class="pic" name="share_img">
+                <div class="layui-input-block">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
+                                class="icon icon-upload3"></i>点击上传
+                        </button>
+                        <div class="layui-upload-list">
+                            <img class="layui-upload-img" id="share_img">
+                            <p class="demoText"></p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="layui-form-item fieldName">
-            <label class="layui-form-label">活动分享图片</label>
-            <input type="hidden" class="pic" name="share_img">
-            <div class="layui-input-block">
-                <div class="layui-upload">
-                    <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
-                            class="icon icon-upload3"></i>点击上传
-                    </button>
-                    <div class="layui-upload-list">
-                        <img class="layui-upload-img" id="share_img">
-                        <p class="demoText"></p>
-                    </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md3">
+
+                <label class="layui-form-label">是否显示</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="status" ng-value="2" title="否">
+                    <input type="radio" name="status" checked ng-value="1" title="是">
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">收费方式</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="pay_mode" checked ng-value="2" title="免费">
+                    <input type="radio" name="pay_mode" ng-value="1" title="付费">
                 </div>
             </div>
         </div>
 
         <div class="layui-form-item">
-  <label class="layui-form-label">开始时间</label>
-  <div class="layui-input-inline">
-    <input type="text" id="begin_time" lay-verify="required"  autocomplete="off" name="begin_time" value="{{d.begin_time}}" placeholder="" class="layui-input">
-  </div>
-    <div class="layui-form-mid layui-word-aux required">*</div>
-</div>
-
-<div class="layui-form-item">
-  <label class="layui-form-label">结束时间</label>
-  <div class="layui-input-inline">
-    <input type="text" id="end_time" lay-verify="required"  autocomplete="off" name="end_time" value="{{d.end_time}}" placeholder="" class="layui-input">
-  </div>
-    <div class="layui-form-mid layui-word-aux required">*</div>
-</div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 浏览量 </label>
-        <div class="layui-input-4">
-            <input type="text" name="see_num" ng-model="field.see_num" class="layui-input"  placeholder="该项默认值是0" autocomplete="off" readonly="readonly">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 收藏量 </label>
-        <div class="layui-input-4">
-            <input type="text" name="cang_num" ng-model="field.cang_num" class="layui-input"  placeholder="该项默认值是0" autocomplete="off" readonly="readonly">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 排序 </label>
-        <div class="layui-input-4">
-            <input type="text" name="sort" ng-model="field.sort" class="layui-input"  placeholder="该项默认值是0" autocomplete="off">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">举办地址</label>
-        <div class="layui-input-12">
-            <div class="layui-input-2">
-                <select name="city"  lay-filter="city"  id="city" xm-select="city" xm-select-max="1"  xm-select-search=""> 
-                    <option  value="">请选择举办城市</option> 
-                    {foreach $city_arr as $key=>$val } 
-                        <option value="{$val.id}"> {$val.city} </option>
-                    {/foreach} 
-                </select> 
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label">是否推荐到首页</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="is_hot" checked ng-value="2" title="否">
+                    <input type="radio" name="is_hot" ng-value="1" title="是">
+                </div>
             </div>
-            <div class="layui-input-4">
-                <input type="text" name="address" ng-model="field.address" class="layui-input"  placeholder="详细地址" autocomplete="off">
-            </div>
-        </div>
-        <div class="layui-form-mid layui-word-aux required">线上活动该项不需要填写</div>
-    </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 网址 </label>
-        <div class="layui-input-4">
-            <input type="text" name="url" ng-model="field.url" class="layui-input"  placeholder="请输入网址" autocomplete="off">
-        </div>
-    </div>
+            <div class="layui-inline layui-col-md5">
 
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 组织信息 </label>
-        <div class="layui-input-4">
-          <textarea name="organ_infor" placeholder="请输入组织信息" class="layui-textarea"  maxlength="500"></textarea>
-        </div>
-    </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">是否显示</label>
-            <div class="layui-input-4">
-                <input type="radio" name="status"  ng-value="2" title="否">
-                <input type="radio" name="status" checked ng-value="1" title="是">
+                <label class="layui-form-label">举办方式</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="hold_mode" checked ng-value="2" title="线下">
+                    <input type="radio" name="hold_mode" ng-value="1" title="线上">
+                </div>
             </div>
         </div>
 
         <div class="layui-form-item">
-            <label class="layui-form-label">收费方式</label>
-            <div class="layui-input-4">
-                <input type="radio" name="pay_mode" checked ng-value="2" title="免费">
-                <input type="radio" name="pay_mode"  ng-value="1" title="付费">
-            </div>
-        </div>
-
-        <div class="layui-form-item">
-            <label class="layui-form-label">举办方式</label>
-            <div class="layui-input-4">
-                <input type="radio" name="hold_mode" checked ng-value="2" title="线下">
-                <input type="radio" name="hold_mode"  ng-value="1" title="线上">
-            </div>
-        </div>
-
-    <div class="layui-form-item">
-            <label class="layui-form-label">是否推荐到首页</label>
-            <div class="layui-input-4">
-                <input type="radio" name="is_hot" checked ng-value="2" title="否">
-                <input type="radio" name="is_hot"  ng-value="1" title="是">
-            </div>
-        </div>
-
-     <div class="layui-form-item">
             <label class="layui-form-label">活动内容</label>
-            <div class="controls layui-input-4" >
+            <div class="controls layui-input-4">
                 <textarea class="layui-textarea" style=" width: 100%; display: none; "></textarea>
                 <script id="content" name="content" type="text/plain"></script>
             </div>
-        </div> 
-
-    
-
-    <!-- <div class="layui-form-item">
-        <label class="layui-form-label"> 举办方 </label>
-        <div class="layui-input-4">
-            <input type="text" name="organizer" ng-model="field.organizer" lay-verify="required"  class="layui-input">
         </div>
-    </div> -->
 
-        
-          
+
+        <!-- <div class="layui-form-item">
+            <label class="layui-form-label"> 举办方 </label>
+            <div class="layui-input-4">
+                <input type="text" name="organizer" ng-model="field.organizer" lay-verify="required"  class="layui-input">
+            </div>
+        </div> -->
+
 
         <div class="layui-form-item">
             <div class="layui-input-block">
@@ -230,7 +246,7 @@
   
   UE.getEditor('content',{
         initialFrameWidth : 600,
-        initialFrameHeight: 600,
+        initialFrameHeight: 450,
         toolbars: [['source', '|', 'undo', 'redo', '|',
             'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
             'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',

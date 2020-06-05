@@ -85,7 +85,7 @@ class Serve extends Common{
               // }
 
             if( !empty($value['begin_time']) && !empty($value['end_time']) ){
-                $value['real_time'] = date('Y-m-d H:i',$value['begin_time']) . ' 至 ' . date('m-d H:i',$value['end_time']);
+                $value['real_time'] = date('Y-m-d',$value['begin_time']) . ' 至 ' . date('m-d',$value['end_time']);
             }
 
             if(!empty($value['serve_type_id'])){

@@ -120,27 +120,34 @@
 					},
 
 					{
+						width: 160,
+						align: 'center',
+						title: '操作',
+						toolbar: '#action'
+					},
+
+					{
 						field: 'serve_type_id',
-						title: '所属活动类型',
+						title: '类型',
 						width: 150
 					},
 
 					{
 						field: 'serve_category_id',
-						title: '活动类别',
+						title: '类别',
 						width: 150
 					},
 
 					{
 						field: 'title',
-						title: '活动标题',
+						title: '标题',
 						width: 200
 					},
 
 					{
 						field: 'pic',
 						align: 'center',
-						title: '活动图片',
+						title: '图片',
 						width: 120,
 						toolbar: '#pic'
 					},
@@ -160,18 +167,18 @@
 					{
 						field: 'status',
 						align: 'center',
-						title: '是否显示',
+						title: '显示',
 						width: 120,
 						toolbar: '#status'
 					},
 
-					{
-						field: 'pay_mode',
-						align: 'center',
-						title: '收费方式',
-						width: 120,
-						toolbar: '#pay_mode'
-					},
+					// {
+					// 	field: 'pay_mode',
+					// 	align: 'center',
+					// 	title: '收费方式',
+					// 	width: 120,
+					// 	toolbar: '#pay_mode'
+					// },
 
 					{
 						field: 'hold_mode',
@@ -184,15 +191,9 @@
 					{
 						field: 'is_hot',
 						align: 'center',
-						title: '是否推荐到首页',
+						title: '推荐',
 						width: 150,
 						toolbar: '#is_hot'
-					},
-
-					{
-						width: 160,
-						align: 'center',
-						toolbar: '#action'
 					}
 
 				]
@@ -246,6 +247,7 @@
 				content: './add.html', //这里content是一个普通的String
 				shade: true,
 				maxmin: true,
+				title: '添加',
 				area: ['90%', '90%']
 			});
     	})
@@ -259,6 +261,7 @@
 				type: 2,
 				content: './edit.html?id=' + id + '&page=' + page, //这里content是一个普通的String
 				shade: true,
+				title: '修改',
 				maxmin: true,
 				area: ['90%', '90%'],
 				yes: function (index, layero) {
