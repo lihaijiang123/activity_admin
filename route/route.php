@@ -25,7 +25,6 @@ return [
     '/setinfo'=>'home/login/setUserInfo', // 设置用户信息
     '/search/[:userId]'=>'home/index/search_list', // 搜索列表
     '/test/[:userId]'=>'home/index/test', // 搜索列表
-    '/lists/[:userId]'=>'home/index/lists',
     '/majors/[:userId]'=>'home/majors/index',
     '/tutor/[:userId]'=>'home/tutor/list',
     '/tdetail/[:userId]/[:tutor_id]'=>'home/tutor/detail', //导师详情

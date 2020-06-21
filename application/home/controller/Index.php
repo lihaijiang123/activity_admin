@@ -527,32 +527,18 @@ class Index extends Common{
     }
 
 
-    // 首页
+    /**
+     * oo
+     * @throws \think\exception\DbException
+     */
     public function test()
     {
         $data = input();
-        // 活动类型
-        $active_types = $this->serveType->getActiveTypes($data['type']);
-        // banner
-        $banners = $this->banner->getBanner();
-        $search_city_whereIn = [];
-        if ((!empty($data['city']) && $data['city'] != '全国')) {
-            /** 去寻找当前城市是否有所在省 if 当前城市有所在省的话，寻找所在省下面的相应数据 else if 当前城市没有所在省的话，寻找当前城市下面的相应数据 */
-            $search_city_whereIn = $this->city->getOtherSameLevelCities($data['city']);
-        }
+        $search_city_whereIn = (!empty($data['city']) && $data['city'] != '全国') ? $this->city->getOtherSameLevelCities($data['city']) : null;
         $param = $this->createParam($data);
-        $search_where1 = array_merge($param, array(['hold_mode', '=', 1]));
-        // 热门 | 全部 0 (所有线上类型 + 当前省的)
-        if (0 == $data['serve_type_id']) {
-            $search_where2 = !empty($search_city_whereIn) ? array_merge($param, array(['search_city', ['in', $search_city_whereIn]])) : null;
-            $list = $this->serve->selectServes($data['type'], $search_where1, $search_where2);
-        }
-        // 线上 1 所有的线上
-        if (1 == $data['serve_type_id']) {
-            $list = $this->serve->selectServes($data['type'], $search_where1);
-        }
-        // !0 1 查询当前城市,当前类型的所有线下
+        $onlineParam = array_merge($param, array(['hold_mode', '=', 1]));
         if (1 < $data['serve_type_id']) {
+            // !0 1 当前城市,当前类型的所有线下
             $add_where = array(
                 ['search_city', ['in', $search_city_whereIn]],
                 ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"],
@@ -560,14 +546,19 @@ class Index extends Common{
             );
             $where = array_merge($param, $add_where);
             $list = $this->serve->selectServes($data['type'], $where);
+        } elseif (1 == $data['serve_type_id']) {
+            // 线上 1 所有的线上
+            $list = $this->serve->selectServes($data['type'], $onlineParam);
+        } else {
+            // 热门 | 全部 0 (所有线上类型 + 当前省的线下)
+            $search_where2 = !empty($search_city_whereIn) ? array_merge($param, array(['search_city', ['in', $search_city_whereIn]])) : null;
+            $list = $this->serve->selectServes($data['type'], $onlineParam, $search_where2);
         }
-
-        $return['active_types'] = $active_types;
-        $return['banners'] = $banners;
-        $return['active_list'] = $list;
-//        dump($return);
-//        exit;
-        return json_msg(0, '成功', $return);
+        return json_msg(0, 'success', array(
+            'active_types' => $this->serveType->getActiveTypes($data['type']),
+            'banners'      => $this->banner->getBanner(),
+            'active_list'  => $list,
+        ));
     }
 
 
