@@ -2,36 +2,36 @@
 
   <script src="//unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
   <script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
-  <script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script> 
+  <script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
 
 <div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
     <fieldset class="layui-elem-field layui-field-title">
         <legend>修改</legend>
     </fieldset>
     <form class="layui-form layui-form-pane">
-        
-    <div class="layui-form-item"> 
-        <label class="layui-form-label">所属活动类型</label> 
+
+    <div class="layui-form-item">
+        <label class="layui-form-label">所属活动类型</label>
         <div class="layui-input-4">
-          <select name="serve_type_id"  lay-filter="serve_type_id"  lay-verify="required"  xm-select="serve_type_id"  xm-select-search=""> 
+          <select name="serve_type_id"  lay-filter="serve_type_id"  lay-verify="required"  xm-select="serve_type_id"  xm-select-search="">
             <option value="">请选择活动类型</option>
             {foreach $serve_type_id_array as $key=>$val }
                 <option value="{$val.id}" {in name="$val['id']" value="$info_array['serve_type_id']"} selected {/in} > {$val.title} </option>
-            {/foreach} 
-        </select> 
-      </div> 
+            {/foreach}
+        </select>
+      </div>
     </div>
 
-    <div class="layui-form-item"> 
-        <label class="layui-form-label">活动类别</label> 
+    <div class="layui-form-item">
+        <label class="layui-form-label">活动类别</label>
         <div class="layui-input-4">
-          <select name="serve_category_id"  lay-filter="serve_category_id"  lay-verify="required"  xm-select="serve_category_id"  xm-select-search="" xm-select-max="1"> 
+          <select name="serve_category_id"  lay-filter="serve_category_id"  lay-verify="required"  xm-select="serve_category_id"  xm-select-search="" xm-select-max="1">
             <option value="">请选择活动类别</option>
             {foreach $serve_category_id_array as $key=>$val }
                 <option value="{$val.id}" {in name="$val['id']" value="$info_array['serve_category_id']"} selected {/in} > {$val.title} </option>
-            {/foreach} 
-        </select> 
-      </div> 
+            {/foreach}
+        </select>
+      </div>
     </div>
 
     <div class="layui-form-item">
@@ -41,17 +41,17 @@
         </div>
     </div>
 
-    <div class="layui-form-item fieldName">  
-      <label class="layui-form-label">活动图片</label> 
+    <div class="layui-form-item fieldName">
+      <label class="layui-form-label">活动图片</label>
       <input type="hidden" class="pic"  name="pic" >
-      <div class="layui-input-block"> 
+      <div class="layui-input-block">
          <div class="layui-upload">
-           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button> 
-           <div class="layui-upload-list"> 
+           <button type="button" class="layui-btn layui-btn-primary uploadImg" ><i class="icon icon-upload3"></i>点击上传</button>
+           <div class="layui-upload-list">
               <img class="layui-upload-img" id="pic" >
-                <p class="demoText" ></p> 
+                <p class="demoText" ></p>
             </div>
-         </div> 
+         </div>
       </div>
   </div>
 
@@ -94,11 +94,11 @@
         <label class="layui-form-label">举办地址</label>
         <div class="layui-input-block">
             <div class="layui-input-2">
-                <select name="city"  lay-filter="city"  lay-verify=""  xm-select="city"  xm-select-search="" xm-select-max="1"> 
+                <select name="city"  lay-filter="city"  lay-verify=""  xm-select="city"  xm-select-search="" xm-select-max="1">
                     <option value="">请选择举办城市</option>
                     {foreach $city_arr as $key=>$val }
                         <option value="{$val.id}" {in name="$val['id']" value="$info_array['city']"} selected {/in} > {$val.city} </option>
-                    {/foreach} 
+                    {/foreach}
                 </select>
             </div>
             <div class="layui-input-4">
@@ -130,10 +130,9 @@
     </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">收费方式</label>
+        <label class="layui-form-label">价格</label>
         <div class="layui-input-4">
-            <input type="radio" name="pay_mode" ng-model="field.pay_mode" ng-checked="field.pay_mode==2" ng-value="2" title="免费">
-            <input type="radio" name="pay_mode" ng-model="field.pay_mode" ng-checked="field.pay_mode==1" ng-value="1" title="付费">
+            <input type="text" name="price" ng-model="field.price" class="layui-input">
         </div>
     </div>
 
@@ -159,7 +158,7 @@
                 <textarea class="layui-textarea"  style=" width: 100%; display: none; "></textarea>
                 <script id="content" name="content" type="text/plain"><?=$content?></script>
             </div>
-        </div> 
+        </div>
 
     <!-- <div class="layui-form-item">
         <label class="layui-form-label"> 举办方 </label>
@@ -168,8 +167,8 @@
         </div>
     </div> -->
 
-        
-        
+
+
 
 
         <div class="layui-form-item">
@@ -185,36 +184,36 @@
 
   <link href="/static/common/css/formSelects-v4.css" rel="stylesheet" />
 
- 
+
 <script src="/static/common/js/angular.min.js"></script>
 <script>
-    
-  
+
+
   UE.getEditor('content',{
         initialFrameWidth : 1000,
         initialFrameHeight: 600
      });
 
-      
+
    layui.config({
         base: '/static/common/js/' //此处路径请自行处理, 可以使用绝对路径
     }).extend({
         formSelects: 'formSelects-v4'
     });
 
-       
+
     var m = angular.module('hd',[]);
     m.controller('ctrl',function($scope) {
         $scope.field = {$info|raw};
         layui.use(['form','upload', 'layer','layedit','formSelects'], function () {
             var form = layui.form, layer = layui.layer,$= layui.jquery,upload = layui.upload,layedit = layui.layedit;
-             
-               
-             var info = {$info|raw}; form.val("form", info);  if(info){ $("#pic").attr("src",info.pic); } 
-var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value",info.pic); } 
+
+
+             var info = {$info|raw}; form.val("form", info);  if(info){ $("#pic").attr("src",info.pic); }
+var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value",info.pic); }
 
               var formSelects = layui.formSelects;
-             
+
 
             form.on('submit(submit)', function (data) {
 
@@ -239,7 +238,7 @@ var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value
                             location.href = res.url + '?page=' + page;
                             // var index = parent.layer.getFrameIndex(window.name);
 							// parent.location.reload();
-                            // parent.layer.close(index); //再执行关闭  
+                            // parent.layer.close(index); //再执行关闭
                         });
                     } else {
                         layer.msg(res.msg, {time: 1800, icon: 2});
@@ -248,40 +247,40 @@ var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value
             })
 
 
-               
-    var uploadInst = upload.render({ 
+
+    var uploadInst = upload.render({
             elem: ".uploadImg" ,
             url: "{:url("UpFiles/upload")}" ,
             before: function(obj){
               var _this = this;
               obj.preview(function(index, file, result){
                    _this.item.parents(".fieldName").find("img").attr("src",result)
-              });  
+              });
             },
-            done: function(res){ 
-                if(res.code>0){ 
+            done: function(res){
+                if(res.code>0){
                   this.item.parents(".fieldName").find("input[type=hidden]").val(res.url)
-                }else{ 
+                }else{
                   return layer.msg("上传失败");
-                } 
+                }
             } ,
-              error: function(res){ 
+              error: function(res){
                 var demoText = this.item.parents(".fieldName").find(".demoText");
-                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');  
-                 demoText.find(".demo-reload").on("click", function(){  
-                  uploadInst.upload(); 
+                 demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                 demoText.find(".demo-reload").on("click", function(){
+                  uploadInst.upload();
                 });
               }
         });
 
 
-                
+
         });
     });
 
 
     // 时间插件shi-jian-cha-jian
-    
+
 useLayDateMultiple('begin_time');
 
 useLayDateMultiple('end_time');

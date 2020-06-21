@@ -11,19 +11,22 @@ class ServeType extends Model
 	protected $pk = 'id';
 
 
-    /**
-     * @return array|array[]|\array[][]
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
-     * @throws \think\exception\DbException
-     */
-    public function getActiveTypes()
+
+    public function getActiveTypes($type)
     {
-        return $this
-            ->field('id, title')
-            ->where('status', 1)
-            ->order('sort desc')
-            ->select()
-            ->toArray();
-	}
+        $data = $this->field('id, title')->where('status', 1)->order('sort desc')->select()->toArray();
+
+        switch ($type) {
+            case 'index':
+                $title = '热门';
+                break;
+            case 'list':
+            default:
+                $title = '全部';
+                break;
+        }
+
+        array_unshift($data, ['id' => 0, 'title' => $title]);
+        return $data;
+    }
 }

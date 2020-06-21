@@ -142,7 +142,7 @@ class Index extends Common{
         }
 
     	$active_list = Db::name('act_serve')
-    					->field('id,title,pay_mode,pic,begin_time,end_time,hold_mode,search_city as city')
+    					->field('id,title,price,pic,begin_time,end_time,hold_mode,search_city as city')
     					->order('sort desc')
     					->where([['status','=',1],['is_hot','=',1]])
     					->where( $search_where );
@@ -180,7 +180,7 @@ class Index extends Common{
      */
     public function activity_detail(){
         $data = input();
-        $info = Db::name('act_serve')->where([['id','=',$data['activity']]])->field('id,title,see_num,cang_num,pay_mode,begin_time,end_time,hold_mode,content,pic,city,address,url,organ_infor,serve_category_id,serve_type_id,share_img')->find();
+        $info = Db::name('act_serve')->where([['id','=',$data['activity']]])->field('id,title,see_num,cang_num,price,begin_time,end_time,hold_mode,content,pic,city,address,url,organ_infor,serve_category_id,serve_type_id,share_img')->find();
         // 浏览量+1
         $info['begin_time'] = date('m-d H:i',$info['begin_time']);
         $info['end_time'] = date('m-d H:i',$info['end_time']);
@@ -219,7 +219,7 @@ class Index extends Common{
      * @Purpose  [purpose]
      * @param    [userId 用户id 必填]
      * @param    [orderType 分享列表|收藏列表 (share|collection) 必填]
-     * @param    [pay_mode 线上、线下 选填 (1|2)]
+     * @param    [price 价格 选填]
      * @param    [page 页码 选填]
      * @param    [serve_type_id 活动类型id 选填]
      * @param    [order 排序 选填 (time_desc|time_asc)]
@@ -330,7 +330,7 @@ class Index extends Common{
             ->distinct(true)
             ->where('share.userId','=',$data['userId'])
             ->Join('act_serve sever','sever.id=share.serve_id')
-            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.pay_mode, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
+            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('share.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
@@ -356,7 +356,7 @@ class Index extends Common{
             ->distinct(true)
             ->where('colle.userId','=',$data['userId'])
             ->Join('act_serve sever','sever.id=colle.serve_id')
-            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.pay_mode, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
+            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('colle.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
@@ -384,7 +384,7 @@ class Index extends Common{
             ->distinct(true)
             ->where('join.userId','=',$data['userId'])
             ->Join('act_serve sever','sever.id=join.serve_id')
-            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.pay_mode, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
+            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('join.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
@@ -496,7 +496,7 @@ class Index extends Common{
         }
 
         $active_list = Db::name('act_serve')
-                        ->field('id,title,begin_time,end_time,city,pay_mode,pic,serve_type_id,city,address,search_serve_type as serve_type,hold_mode')
+                        ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,city,address,search_serve_type as serve_type,hold_mode')
                         ->order( $order )
                         ->where( $search_where );
                         if( !empty($search_whereOr) ){
@@ -528,58 +528,59 @@ class Index extends Common{
 
 
     // 首页
-    public function test(){
+    public function test()
+    {
         $data = input();
         // 活动类型
-        $active_types = $this->serveType->getActiveTypes();
+        $active_types = $this->serveType->getActiveTypes($data['type']);
         // banner
         $banners = $this->banner->getBanner();
         $search_city_whereIn = [];
-        if( (!empty($data['city']) && $data['city'] != '全国') ){
+        if ((!empty($data['city']) && $data['city'] != '全国')) {
             /** 去寻找当前城市是否有所在省 if 当前城市有所在省的话，寻找所在省下面的相应数据 else if 当前城市没有所在省的话，寻找当前城市下面的相应数据 */
             $search_city_whereIn = $this->city->getOtherSameLevelCities($data['city']);
         }
-
-        $search_where[] = ['t1.status', '=', 1];
-
-        if (!empty($data['keywords'])) {
-            $search_where[] = ['t1.title', 'like', "%" . $data['keywords'] . "%"];
-        }
-
-        if ($data['type'] == 'index') {
-            $search_where[] = ['is_hot', '=', 1];
-            $search_where[] = ['end_time', '>', time()];
-            $search_where[] = ['begin_time', '<', time()];
-        }
-        $search_where1 = array_merge($search_where, array(['hold_mode', '=', 1]));
-        $search_where2 = array_merge($search_where, array(['search_city', ['in', $search_city_whereIn]]));
-        // 热门 0 (所有线上类型 + 当前省的)
+        $param = $this->createParam($data);
+        $search_where1 = array_merge($param, array(['hold_mode', '=', 1]));
+        // 热门 | 全部 0 (所有线上类型 + 当前省的)
         if (0 == $data['serve_type_id']) {
-            $search_where2 = !empty($search_city_whereIn)  ? $search_where2 : null;
-            $list = $this->serve->selectServes($search_where1, $search_where2);
+            $search_where2 = !empty($search_city_whereIn) ? array_merge($param, array(['search_city', ['in', $search_city_whereIn]])) : null;
+            $list = $this->serve->selectServes($data['type'], $search_where1, $search_where2);
         }
         // 线上 1 所有的线上
         if (1 == $data['serve_type_id']) {
-            $list = $this->serve->selectServes($search_where1);
+            $list = $this->serve->selectServes($data['type'], $search_where1);
         }
         // !0 1 查询当前城市,当前类型的所有线下
         if (1 < $data['serve_type_id']) {
             $add_where = array(
-                ['search_city' , ['in', $search_city_whereIn]],
-                ['serve_type_id', 'like', "%" .$data['serve_type_id']. "%"],
+                ['search_city', ['in', $search_city_whereIn]],
+                ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"],
                 ['hold_mode', '=', 2],
             );
-            $where = array_merge($search_where, $add_where);
-            $list = $this->serve->selectServes($where);
+            $where = array_merge($param, $add_where);
+            $list = $this->serve->selectServes($data['type'], $where);
         }
-        array_unshift($active_types,['id'=>0,'title'=>'热门']);
 
         $return['active_types'] = $active_types;
         $return['banners'] = $banners;
         $return['active_list'] = $list;
 //        dump($return);
 //        exit;
-        return json_msg(0,'成功',$return);
+        return json_msg(0, '成功', $return);
+    }
+
+
+    private function createParam($data){
+        $param[] = ['t1.status', '=', 1];
+        if (!empty($data['keywords']))
+            $param[] = ['t1.title', 'like', "%" . $data['keywords'] . "%"];
+        if ($data['type'] == 'index') {
+            $param[] = ['is_hot', '=', 1];
+            $param[] = ['end_time', '>', time()];
+            $param[] = ['begin_time', '<', time()];
+        }
+        return $param;
     }
 
     public function lists()
@@ -644,7 +645,7 @@ class Index extends Common{
         // 所有的线上
         if( $data['serve_type_id'] == 0 || $data['serve_type_id'] == 1 ){
             $active_list = Db::name('act_serve')
-                ->field('id,title,begin_time,end_time,city,pay_mode,pic,serve_type_id,serve_category_id,city,address,search_serve_type as serve_type,hold_mode')
+                ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,serve_category_id,city,address,search_serve_type as serve_type,hold_mode')
                 ->where( $search_where )
                 ->where('serve_type_id','like',"%1%")
                 ->select();
@@ -680,7 +681,7 @@ class Index extends Common{
             }
             $search_where[] = ['hold_mode', '=', 2];
             $active_list_xianxia = Db::name('act_serve')
-                ->field('id,title,begin_time,end_time,city,pay_mode,pic,serve_type_id,city,serve_category_id,address,search_serve_type as serve_type,hold_mode,search_city')
+                ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,city,serve_category_id,address,search_serve_type as serve_type,hold_mode,search_city')
                 ->where( $search_where );
             if( !empty($search_city_whereIn) ){
                 $active_list_xianxia ->whereIn( 'search_city' , $search_city_whereIn );
@@ -698,7 +699,7 @@ class Index extends Common{
             //$active_list = [];
 
             $active_list = Db::name('act_serve')
-                ->field('id,title,begin_time,end_time,city,pay_mode,pic,serve_type_id,serve_category_id,city,address,search_serve_type as serve_type,hold_mode')
+                ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,serve_category_id,city,address,search_serve_type as serve_type,hold_mode')
                 ->where( $search_where )
                 ->where('serve_type_id','like',"%1%")
                 ->where('serve_type_id','like',"%". $data['serve_type_id'] ."%")
@@ -735,7 +736,7 @@ class Index extends Common{
             $search_where[] = ['hold_mode', '=', 2];
             $search_where[] = ['serve_type_id', 'like', "%" .$data['serve_type_id']. "%"];
             $active_list_xianxia = Db::name('act_serve')
-                ->field('id,title,begin_time,end_time,city,pay_mode,pic,serve_type_id,serve_category_id,city,address,search_serve_type as serve_type,hold_mode,search_city')
+                ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,serve_category_id,city,address,search_serve_type as serve_type,hold_mode,search_city')
                 ->where( $search_where );
             if( !empty($search_city_whereIn) ){
                 $active_list_xianxia ->whereIn( 'search_city' , $search_city_whereIn );
@@ -748,7 +749,7 @@ class Index extends Common{
         }
 
 
-        $return_active_list = array_slice($active_list, ($page - 1) * config('pageSize') , config('pageSize'));
+        $return_active_list = array_slice($active_list, ($page - 1) * 100, 100);
 
         foreach ($return_active_list as $key => &$val) {
             $val['pic'] = config('admin_path') . $val['pic'];
@@ -762,7 +763,8 @@ class Index extends Common{
 
         }
         array_unshift($active_types,['id'=>0,'title'=>'全部']);
-
+        dump($return_active_list);
+        exit;
         $return['active_types'] = $active_types;
         $return['banners'] = $banners;
         $return['active_list'] = $return_active_list;

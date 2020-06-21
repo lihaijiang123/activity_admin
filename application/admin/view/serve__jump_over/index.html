@@ -69,8 +69,7 @@
 <script type="text/html"
 	id="status"><input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="status" {{ d.status == 1 ? "checked" : "" }}></script>
 
-<script type="text/html"
-	id="pay_mode"><input type="checkbox" name="pay_mode" value="{{d.id}}" lay-skin="switch" lay-text="付费|免费" lay-filter="pay_mode" {{ d.pay_mode == 1 ? "checked" : "" }}></script>
+<input class="layui-input" name="key" id="price" placeholder="{:lang('pleaseEnter')}价格" autocomplete="off">
 
 <script type="text/html"
 	id="hold_mode"><input type="checkbox" name="hold_mode" value="{{d.id}}" lay-skin="switch" lay-text="线上|线下" lay-filter="hold_mode" {{ d.hold_mode == 1 ? "checked" : "" }}></script>
@@ -166,11 +165,11 @@
 					},
 
 					{
-						field: 'pay_mode',
+						field: 'price',
 						align: 'center',
-						title: '收费方式',
+						title: '价格',
 						width: 120,
-						toolbar: '#pay_mode'
+						toolbar: '#price'
 					},
 
 					{
@@ -312,28 +311,7 @@
 			}
 		});
 
-		form.on('switch(pay_mode)', function (obj) {
-			loading = layer.load(1, {
-				shade: [0.1, '#fff']
-			});
-			var id = this.value;
-			var status = obj.elem.checked === true ? 1 : 2;
-			$.post('{:url("updata")}', {
-				'id': id,
-				pay_mode: status
-			}, function (res) {
-				layer.close(loading);
-				if (res.status == 1) {
-					location.reload();
-				} else {
-					layer.msg(res.msg, {
-						time: 1000,
-						icon: 2
-					});
-					return false;
-				}
-			})
-		});
+
 
 		form.on('switch(hold_mode)', function (obj) {
 			loading = layer.load(1, {
