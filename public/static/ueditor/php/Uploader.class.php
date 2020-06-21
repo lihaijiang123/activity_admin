@@ -361,7 +361,7 @@ class Uploader
     {
         return array(
             "state" => $this->stateInfo,
-            "url" => 'https://relclothing.fuyouhome.top' . $this->fullName,
+            "url" => 'http://relclothing.fuyouhome.top' . $this->fullName,
             "title" => $this->fileName,
             "original" => $this->oriName,
             "type" => $this->fileType,

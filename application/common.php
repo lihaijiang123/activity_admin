@@ -717,15 +717,15 @@ function safe_html($html){
  * [json_msg 返回json]
  * @return [type] [description]
  */
- function json_msg($code,$msg="",$data=array()){  
-        $result=array(  
-          'code'=>$code,  
-          'msg'=>$msg, 
-          'data'=>$data   
-        );  
-        //输出json  
-        echo json_encode($result);  
-        exit;  
+ function json_msg($code,$msg="",$data=array()){
+        $result=array(
+          'code'=>$code,
+          'msg'=>$msg,
+          'data'=>$data
+        );
+        //输出json
+        echo json_encode($result);
+        exit;
 }
 
 /**
@@ -742,4 +742,13 @@ function change_key( $arr ){
         }
     }
     return $tmp_arr;
+}
+
+
+function imgAddHost(array $data, $field)
+{
+    foreach ($data as &$item) {
+        $item[$field] = config('admin_path') . $item[$field];
+    }
+    return $data;
 }
