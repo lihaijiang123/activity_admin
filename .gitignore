@@ -5,3 +5,4 @@
 /runtime
 /public/Data
 config/database.php
+/public/uploads
