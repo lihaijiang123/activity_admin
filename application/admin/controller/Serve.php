@@ -24,12 +24,16 @@ class Serve extends Common{
             $this->city_arr[$key]['city'] = $val['city'];
         }
 
+        $organize = new \app\admin\model\Organize();
+        $organize = $organize->selectOrFail();
+
         $this->city_arr = change_key($this->city_arr);
 
         $this->assign([
             'serve_type_id_array'   => $this->serve_type_id_array,
             'serve_category_id_array'   => $this->serve_category_id_array,
-            'city_arr'  =>  $this->city_arr
+            'city_arr'  =>  $this->city_arr,
+            'organize' => $organize,
         ]);
     }
 

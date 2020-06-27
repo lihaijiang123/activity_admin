@@ -30,8 +30,7 @@
             <div class="layui-inline layui-col-md5">
                 <label class="layui-form-label">活动类别</label>
                 <div class="layui-input-7">
-                    <select name="serve_category_id" lay-filter="serve_category_id" lay-verify="required"
-                            xm-select="serve_category_id" xm-select-search="" xm-select-max="1">
+                    <select name="serve_category_id" lay-filter="serve_category_id" lay-verify="required" xm-select="serve_category_id" xm-select-search="" xm-select-max="1">
                         <option value="">请选择活动类别</option>
                         {foreach $serve_category_id_array as $key=>$val }
                         <option value="{$val.id}"> {$val.title}</option>
@@ -49,6 +48,19 @@
                 <div class="layui-form-mid layui-word-aux required">*</div>
             </div>
 
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">主办方</label>
+            <div class="layui-input-8">
+                <select name="organize_id" lay-filter="organize_id" lay-verify="required" xm-select="organize_id" xm-select-search="" xm-select-max="1">
+                    <option value="">请选择所属活动</option>
+                    {foreach $organize as $key=>$val }
+                    <option value="{$val.id}"> {$val.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux required">*</div>
         </div>
 
         <div class="layui-form-item">

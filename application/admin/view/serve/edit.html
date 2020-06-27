@@ -39,6 +39,19 @@
         </div>
 
         <div class="layui-form-item">
+            <label class="layui-form-label">主办方</label>
+            <div class="layui-input-4">
+                <select name="organize_id" lay-filter="organize_id" lay-verify="required" xm-select="organize_id" xm-select-search="" xm-select-max="1">
+                    <option value="">请选择所属活动</option>
+                    {foreach $organize as $key=>$val }
+                    <option  {if $info_array['organize_id'] == $val.id}selected{/if}  value="{$val.id}"> {$val.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+            <div class="layui-form-mid layui-word-aux required">*</div>
+        </div>
+
+        <div class="layui-form-item">
             <label class="layui-form-label"> 活动标题 </label>
             <div class="layui-input-4">
                 <input type="text" name="title" ng-model="field.title" lay-verify="required" class="layui-input"
@@ -265,8 +278,11 @@
             var form = layui.form, layer = layui.layer,$= layui.jquery,upload = layui.upload,layedit = layui.layedit;
 
 
-             var info = {$info|raw}; form.val("form", info);  if(info){ $("#pic").attr("src",info.pic); }
-var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value",info.pic); }
+            var info = {$info|raw}; form.val("form", info);  if(info){ $("#pic").attr("src",info.pic); }
+            var info = {$info|raw}; form.val("form", info);  if(info){ $(".pic").attr("value",info.pic); }
+
+            var info = {$info|raw}; form.val("form", info);  if(info){ $("#share_img").attr("src",info.share_img); }
+            var info = {$info|raw}; form.val("form", info);  if(info){ $(".share_img").attr("value",info.share_img); }
 
               var formSelects = layui.formSelects;
 

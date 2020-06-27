@@ -1,0 +1,125 @@
+{include file="common/head"/}
+<script src="//unpkg.com/jquery@3.3.1/dist/jquery.min.js"></script>
+<script type="text/javascript" src="/static/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="/static/ueditor/ueditor.all.js"></script>
+
+<div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>添加</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-4">
+                <input type="text" name="name" ng-model="field.name" lay-verify="required"  class="layui-input" autocomplete="off">
+            </div>
+        </div>
+        <div class="layui-form-item fieldName">
+            <label class="layui-form-label">活动图片</label>
+            <input type="hidden" class="pic" name="pic">
+            <div class="layui-input-block">
+                <div class="layui-upload">
+                    <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
+                            class="icon icon-upload3"></i>点击上传
+                    </button>
+                    <div class="layui-upload-list">
+                        <img class="layui-upload-img" id="pic">
+                        <p class="demoText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 摘要 </label>
+            <div class="layui-input-8">
+                <textarea name="desc" placeholder="摘要" class="layui-textarea" maxlength="500"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">活动内容</label>
+            <div class="controls layui-input-4">
+                <textarea class="layui-textarea" style=" width: 100%; display: none; "></textarea>
+                <script id="content" name="content" type="text/plain"></script>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="button" class="layui-btn" lay-submit="" lay-filter="submit">{:lang('submit')}</button>
+                <!-- <a href="{:url('index')}" class="layui-btn layui-btn-primary">{:lang('back')}</a> -->
+            </div>
+        </div>
+    </form>
+</div>
+{include file="common/foot"/}
+<link href="/static/common/css/formSelects-v4.css" rel="stylesheet" />
+<script src="/static/common/js/angular.min.js"></script>
+<script>
+    UE.getEditor('content',{
+        initialFrameWidth : 600,
+        initialFrameHeight: 450,
+        toolbars: [['source', '|', 'undo', 'redo', '|',
+            'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+            'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+            'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+            'directionalityltr', 'directionalityrtl', 'indent', '|',
+            'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+            'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+            'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 'pagebreak', 'template', 'background', '|',
+            'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+            'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+            'print', 'preview', 'searchreplace', 'drafts', 'help']]
+    });
+
+    var m = angular.module('hd',[]);
+    m.controller('ctrl',function($scope) {
+        layui.use(['form','upload', 'layer','layedit'], function () {
+            var form = layui.form, layer = layui.layer,$= layui.jquery,upload = layui.upload;
+            form.on('submit(submit)', function (data) {
+                // 提交到方法 默认为本身
+                var loading = layer.load(1, {shade: [0.1, '#fff']});
+                //获取编辑器的内容
+                $.post("", data.field, function (res) {
+                    console.log(res);
+                    layer.close(loading);
+                    if (res.code > 0) {
+                        layer.msg(res.msg, {time: 1800, icon: 1}, function () {
+                            var index = parent.layer.getFrameIndex(window.name);
+                            parent.location.reload();
+                            parent.layer.close(index); //再执行关闭
+                        });
+                    } else {
+                        layer.msg(res.msg, {time: 1800, icon: 2});
+                    }
+                });
+            })
+
+            var uploadInst = upload.render({
+                elem: ".uploadImg",
+                url: "{:url('UpFiles/upload')}",
+                before: function(obj){
+                    var _this = this;
+                    obj.preview(function(index, file, result){
+                        _this.item.parents(".fieldName").find("img").attr("src",result)
+                    });
+                },
+                done: function(res){
+                    if(res.code>0){
+                        this.item.parents(".fieldName").find("input[type=hidden]").val(res.url)
+                    }else{
+                        return layer.msg("上传失败");
+                    }
+                },
+                error: function(res){
+                    var demoText = this.item.parents(".fieldName").find(".demoText");
+                    demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
+                    demoText.find(".demo-reload").on("click", function(){
+                        uploadInst.upload();
+                    });
+                }
+            });
+
+        });
+    });
+</script>
+</body>
+</html>

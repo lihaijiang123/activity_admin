@@ -1,0 +1,304 @@
+{include file="common/head"/}
+<style>
+	.sele {
+		height: 37px;
+		width: 200px;
+		border: 1px solid #E6E6E6;
+	}
+</style>
+<div class="admin-main layui-anim layui-anim-upbit">
+	<input type="hidden" name="pageId" value="{$pageId}" id='pageId'>
+	<fieldset class="layui-elem-field layui-field-title">
+		<legend>列表</legend>
+	</fieldset>
+
+
+	<table class="layui-table" id="list" lay-filter="list"></table>
+
+</div>
+
+<!-- 需要（编辑的方法名称 主键id 的名称 start-->
+<script type="text/html" id="action">
+	<a class="layui-btn layui-btn-xs" id="edit_btn" data-page="{{d.page}}" data-id="{{d.id}}">编辑</a>    <!-- 主键 -->
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<!-- 需要（编辑的方法名称 主键id 的名称 end-->
+
+
+
+<!-- 需要 添加的方法名称 按钮的的title -->
+<script type="text/html" id="topBtn">
+	<!-- <a href="{:url('add')}" class="layui-btn  layui-btn-sm" >添加</a> -->
+<a class="layui-btn  layui-btn-sm" id="add_btn">添加</a>
+</script>
+<!-- 需要 添加的方法名称 按钮的的title -->
+
+
+
+<script type="text/html" id="pic"> <img src="{{d.pic}}" /></script>
+
+<script type="text/html"
+	id="status"><input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="status" {{ d.status == 1 ? "checked" : "" }}></script>
+
+<input class="layui-input" name="key" id="price" placeholder="{:lang('pleaseEnter')}价格" autocomplete="off">
+
+
+<script type="text/html"
+	id="hold_mode"><input type="checkbox" name="hold_mode" value="{{d.id}}" lay-skin="switch" lay-text="线上|线下" lay-filter="hold_mode" {{ d.hold_mode == 1 ? "checked" : "" }}></script>
+
+<script type="text/html"
+	id="is_hot"><input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_hot" {{ d.is_hot == 1 ? "checked" : "" }}></script>
+
+
+
+{include file="common/foot"/}
+
+<link href="/static/common/css/formSelects-v4.css" rel="stylesheet" />
+<script>
+	layui.config({
+		base: '/static/common/js/' //此处路径请自行处理, 可以使用绝对路径
+	}).extend({
+		formSelects: 'formSelects-v4'
+	});
+
+	layui.use(['table', 'form', 'formSelects'], function () {
+
+		var table = layui.table,
+			form = layui.form,
+			$ = layui.jquery;
+
+		var pageId = $('#pageId').val();
+
+		var formSelects = layui.formSelects;
+		formSelects.btns('serve_type_id', []);
+		formSelects.btns('city', []);
+		var exportData = '';
+		var tableIn = table.render({
+			id: 'user',
+			elem: '#list',
+			url: '{:url("index")}',
+			method: 'post',
+			toolbar: '#topBtn',
+			totalRow: true,
+			page: { curr: pageId },
+			cols: [
+				[
+
+					{
+						field: 'id',
+						title: 'ID',
+						width: 80
+					},
+
+					{
+						align: 'center',
+						title: '操作',
+						toolbar: '#action'
+					},
+
+					{
+						field: 'name',
+						title: '名称',
+					},
+
+					{
+						field: 'pic',
+						title: 'LOGO',
+						toolbar: '#pic'
+					},
+
+					{
+						field: 'fans',
+						title: '粉丝数量',
+					},
+
+					{
+						field: 'attention',
+						align: 'center',
+						title: '关注数量',
+					}
+				]
+			],
+			limit: 10, //每页默认显示的数量
+			done: function (res, curr, count) {
+				exportData = res.data; //获取表格中的数据集合。
+				// setTimeout(function () {
+				// 	if (sessionStorage.getItem('now_page')) {
+				// 		sessionStorage.removeItem('now_page');
+				// 	}else {
+				// 		sessionStorage.setItem('now_page', curr);
+				// 	}
+				// }, 1000)
+			},
+		});
+
+		//搜索
+		$('#search').on('click', function () {
+			var key = $('#key').val();
+			// 活动类型
+			var serve_type_id = formSelects.value('serve_type_id').length == 0 ? '' : formSelects.value('serve_type_id')[0].name;
+			// 城市
+			var city = formSelects.value('city').length == 0 ? '' : formSelects.value('city')[0].name;
+
+			if ($.trim(key) === '' && $.trim(serve_type_id) === '' && $.trim(city) === '') {
+				layer.msg('{:lang("pleaseEnter")}关键字', {
+					icon: 0
+				});
+				return false;
+			}
+
+			tableIn.reload({
+				page: {
+					page: 1
+				},
+				where: {
+					key: key,
+					serve_type_id: serve_type_id,
+					city: city
+				}
+			});
+		});
+
+
+		$(document).on('click','#add_btn',function() {
+        	// console.log(1111);
+			// return false;
+			var index = layer.open({
+				type: 2,
+				content: './add.html', //这里content是一个普通的String
+				shade: true,
+				maxmin: true,
+				title: '添加',
+				area: ['90%', '90%']
+			});
+    	})
+
+		$(document).on('click','#edit_btn',function() {
+        	var id = $(this).parents('tr').children().eq(0).text();
+			var page = $(this).attr('data-page');
+			// console.log('./edit.html?id=' + id + '&page=' + page);
+
+			var index = layer.open({
+				type: 2,
+				content: './edit.html?id=' + id + '&page=' + page, //这里content是一个普通的String
+				shade: true,
+				title: '修改',
+				maxmin: true,
+				area: ['90%', '90%'],
+				yes: function (index, layero) {
+					console.log(index, layero);
+				},
+				cancel: function () {
+					// console.log(sessionStorage.getItem(''))
+					console.log(1);
+				}
+			});
+    	})
+
+		table.on('tool(list)', function (obj) {
+			var data = obj.data;
+			if (obj.event === 'del') {
+				layer.confirm('您确定要删除这条信息吗？', function (index) {
+					var loading = layer.load(1, {
+						shade: [0.1, '#fff']
+					});
+					$.post("{:url('Del')}", {
+						id: data.id
+					}, function (res) { //主键
+						layer.close(loading);
+						if (res.code === 1) {
+							layer.msg(res.msg, {
+								time: 1000,
+								icon: 1
+							});
+							tableIn.reload();
+						} else {
+							layer.msg('操作失败！', {
+								time: 1000,
+								icon: 2
+							});
+						}
+					});
+					layer.close(index);
+				});
+			}
+		});
+
+
+		form.on('switch(hold_mode)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				hold_mode: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+		form.on('switch(is_hot)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				is_hot: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+		form.on('switch(status)', function (obj) {
+			loading = layer.load(1, {
+				shade: [0.1, '#fff']
+			});
+			var id = this.value;
+			var status = obj.elem.checked === true ? 1 : 2;
+			$.post('{:url("updata")}', {
+				'id': id,
+				status: status
+			}, function (res) {
+				layer.close(loading);
+				if (res.status == 1) {
+					location.reload();
+				} else {
+					layer.msg(res.msg, {
+						time: 1000,
+						icon: 2
+					});
+					return false;
+				}
+			})
+		});
+
+
+
+
+	});
+</script>
+</body>
+
+</html>
