@@ -17,35 +17,22 @@ class Serve extends Model
         parent::__construct($data);
 
     }
-//
-//    public function getBeginTimeAttr($begin_time)
-//    {
-//        return date('y/m/d H:i',$begin_time);
-//    }
-//
-//    public function getEndTimeAttr($end_time)
-//    {
-//        return date('y/m/d H:i',$end_time);
-//    }
 
-    /**
-     * @param $search_where1
-     * @param array $search_where2
-     * @return array
-     * @throws \think\exception\DbException
-     */
-    public function selectServes($type, $search_where1, $search_where2 = [])
+
+    public function selectServes($type, $search_where1, $order = [], $search_where2 = [])
     {
         $page = input('get.page') ? input('get.page') : 1;
         $em = $this
             ->alias('t1')
-            ->field('t1.id,t1.title,begin_time,end_time,city,currency,price,pic,serve_type_id,t2.name city,t3.title serve_category_id,address,search_serve_type as serve_type,hold_mode,search_city')
+            ->field('t1.id,t1.title,begin_time,end_time,city,currency,price,pic,serve_type_id,t2.name city,t3.title serve_category_id,address,search_serve_type as serve_type,hold_mode,search_city,count(t1.id) as shareNum')
             ->join('act_city t2', 't1.city = t2.id', 'left')
             ->join('act_serve_category t3', 't1.serve_category_id=t3.id', 'left')
+            ->join('act_share sh', 't1.id = sh.serve_id', 'left')
             ->where([$search_where1]);
         if (!empty($search_where2)) $em->whereOr([$search_where2]);
         $data = $em
-            ->order('begin_time', 'asc')
+            ->group('t1.id')
+            ->order($order)
             ->paginate(100, true, ['page' => $page])
             ->getCollection()
             ->toArray();

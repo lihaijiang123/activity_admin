@@ -19,6 +19,7 @@ return [
     '/activity/[:userId]'=>'home/index/activity', //活动
     '/share/[:userId]'=>'home/index/share', //分享
     '/collection/[:userId]'=>'home/index/collection', //收藏
+    '/attention/[:userId]'=>'home/index/attention', //收藏
     '/join/[:userId]'=>'home/index/join', //想参加
     '/actdetail/[:userId]'=>'home/index/activity_detail', //活动详情
     '/login'=>'home/login/index', // 授权
@@ -35,7 +36,9 @@ return [
     '/pdetail/[:userId]/[:id]'=>'home/products/detail', //产品详情
     '/pmatching/[:userId]/[:degree]/[:gpa]/[:tfys]/[:gg]/[:bjts]'=>'home/products/matching', //匹配
     '/bannerwall/[:userId]'=>'home/bannerwall/list', //产品详情
-    '/help/[:userId]'=>'home/index/help'//客服
+    '/help/[:userId]'=>'home/index/help',//客服
+    '/organizeList/[:userId]'=>'home/index/organizeList',//主办方活动列表
+    '/organizeInfo/[:userId]'=>'home/index/organizeInfo',//主办方信息
     // 
 
 

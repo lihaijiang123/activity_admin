@@ -1,14 +1,19 @@
 <?php
+
 namespace app\home\controller;
+
 use app\admin\model\Banner;
 use app\admin\model\City;
 
+use app\admin\model\Organize;
 use app\admin\model\Serve;
+use app\admin\model\ServeCategory;
 use app\admin\model\ServeType;
 use think\db;
 
 // 首页控制器
-class Index extends Common{
+class Index extends Common
+{
 
     /* @var $serveType ServeType */
     private $serveType;
@@ -22,6 +27,11 @@ class Index extends Common{
     /* @var $serve Serve */
     private $serve;
 
+    /* @var $organize Organize */
+    private $organize;
+
+    /* @var ServeCategory */
+    private $serveCategory;
 
     public function initialize()
     {
@@ -30,9 +40,11 @@ class Index extends Common{
         $this->banner = new Banner();
         $this->city = new City();
         $this->serve = new Serve();
+        $this->organize = new Organize();
+        $this->serveCategory = new ServeCategory();
 
         $city_con = file_get_contents('city_json_new.txt');
-        $city_con_decode = json_decode($city_con,true);
+        $city_con_decode = json_decode($city_con, true);
         foreach ($city_con_decode as $key => $val) {
             $this->city_arr[$key]['id'] = $val['id'];
             $this->city_arr[$key]['city'] = $val['city'];
@@ -47,7 +59,7 @@ class Index extends Common{
         }
         // 类别
         // echo '<pre>';
-        $this->active_categorys = change_key(Db::name('act_serve_category')->field('id,title')->order('sort desc')->where('status','=',1)->select());
+        $this->active_categorys = change_key(Db::name('act_serve_category')->field('id,title')->order('sort desc')->where('status', '=', 1)->select());
         // var_dump($active_types);die;
     }
 
@@ -62,27 +74,28 @@ class Index extends Common{
      * @param    [serve_type_id 活动类型id 选填]
      * @return   [type]     [description]
      */
-    public function index(){
-    	$data = input();
-    	$page = empty($data['page']) ? 1 : $data['page'] ;
+    public function index()
+    {
+        $data = input();
+        $page = empty($data['page']) ? 1 : $data['page'];
 
-    	// 搜索条件
-    	$search_where = [];
-    	// 返回值
-    	$return = [];
+        // 搜索条件
+        $search_where = [];
+        // 返回值
+        $return = [];
 
-    	// 活动类型
-    	$active_types = Db::name('act_serve_type')->field('id,title')->order('sort desc')->where('status','=',1)->select();
+        // 活动类型
+        $active_types = Db::name('act_serve_type')->field('id,title')->order('sort desc')->where('status', '=', 1)->select();
 
-    	// banner
-    	$banners = Db::name('act_banner')->field('id,title,img,url')->order('sort desc')->where('status','=',1)->select();
-    	if( !empty($banners) ){
-    		foreach ($banners as $banner_key => &$banner_val) {
-    			$banner_val['img'] = config('admin_path') . $banner_val['img'];
-    		}
-    	}
-    	// 热门活动
-    	if( (!empty($data['city']) && $data['city'] != '全国') || $data['serve_type_id'] != 1 ){
+        // banner
+        $banners = Db::name('act_banner')->field('id,title,img,url')->order('sort desc')->where('status', '=', 1)->select();
+        if (!empty($banners)) {
+            foreach ($banners as $banner_key => &$banner_val) {
+                $banner_val['img'] = config('admin_path') . $banner_val['img'];
+            }
+        }
+        // 热门活动
+        if ((!empty($data['city']) && $data['city'] != '全国') || $data['serve_type_id'] != 1) {
             /*
                 去寻找当前城市是否有所在省
                 if 当前城市有所在省的话，寻找所在省下面的相应数据
@@ -93,81 +106,81 @@ class Index extends Common{
             $search_city_arr = [];
             foreach ($this->city_arr_search as $key => $val) {
                 foreach ($val as $key2 => $val2) {
-                    if( $val2['city'] == $data['city'] && $val2['sheng_id'] != '' ){
-                    // 普通城市
+                    if ($val2['city'] == $data['city'] && $val2['sheng_id'] != '') {
+                        // 普通城市
                         $search_city_arr[] = array_column($this->city_arr_search[$val2['sheng_id']], 'city');
-                    }else if( $val2['city'] == $data['city'] && $val2['sheng_id'] == '' ){
-                    // 直辖市
+                    } else if ($val2['city'] == $data['city'] && $val2['sheng_id'] == '') {
+                        // 直辖市
                         $search_city_arr[] = $val2['city'];
                     }
                 }
             }
 
-            if( is_array($search_city_arr[0]) ){
+            if (is_array($search_city_arr[0])) {
                 $search_city_whereIn = implode(',', $search_city_arr[0]);
-            }else{
+            } else {
                 $search_city_whereIn = $search_city_arr[0];
             }
 
 
-    	}else if( $data['city'] == '全国' ){
+        } else if ($data['city'] == '全国') {
             // 全国
             $search_where[] = ['search_city', '<>', ''];
         }
 
-    	if( $data['serve_type_id'] != 0 && $data['serve_type_id'] !=1 ){
+        if ($data['serve_type_id'] != 0 && $data['serve_type_id'] != 1) {
             // 普通类型
-    		$search_where[] = ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"];
-    	}else if( $data['serve_type_id'] == 1 ){
+            $search_where[] = ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"];
+        } else if ($data['serve_type_id'] == 1) {
             // 线上
             $search_city_whereIn = [];
             // $search_where[] = ['hold_mode', '=', "1"];
-            if( $data['city'] == '全国' ){
+            if ($data['city'] == '全国') {
                 $search_whereOr[] = ['hold_mode', '=', "1"];
                 // $search_whereOr[] = ['search_city','=',$data['city']];
-            }else{
-                $search_where[] = ['search_city','=',$data['city']];
+            } else {
+                $search_where[] = ['search_city', '=', $data['city']];
                 $search_whereOr[] = ['hold_mode', '=', "1"];
             }
-        }else if( $data['serve_type_id'] == 0 ){
+        } else if ($data['serve_type_id'] == 0) {
             $search_where = [];
             $search_whereOr = [];
             $search_city_whereIn = [];
-            $search_where[] = ['search_city','=',$data['city']];
+            $search_where[] = ['search_city', '=', $data['city']];
             $search_whereOr[] = ['hold_mode', '=', "1"];
             // 全部
             // $search_where[] = ['serve_type_id', '<>', ''];
-        }else{
+        } else {
             $search_where[] = ['serve_type_id', '<>', ''];
         }
 
-    	$active_list = Db::name('act_serve')
-    					->field('id,title,price,pic,begin_time,end_time,hold_mode,search_city as city')
-    					->order('sort desc')
-    					->where([['status','=',1],['is_hot','=',1]])
-    					->where( $search_where );
-                        if( !empty($search_whereOr) ){
-                            $active_list->whereOr( $search_whereOr );
-                        }
-                        if( !empty($search_city_whereIn) ){
-                            $active_list->whereIn( 'search_city', $search_city_whereIn );
-                        }
-    					$active_list = $active_list->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
-    					->toArray();
+        $active_list = Db::name('act_serve')
+            ->field('id,title,price,pic,begin_time,end_time,hold_mode,search_city as city')
+            ->order('sort desc')
+            ->where([['status', '=', 1], ['is_hot', '=', 1]])
+            ->where($search_where);
+        if (!empty($search_whereOr)) {
+            $active_list->whereOr($search_whereOr);
+        }
+        if (!empty($search_city_whereIn)) {
+            $active_list->whereIn('search_city', $search_city_whereIn);
+        }
+        $active_list = $active_list->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
+            ->toArray();
 
-    	if( !empty($active_list['data']) ){
-    		foreach ($active_list['data'] as $key => &$val) {
-    			$val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i',$val['begin_time']);
-                $val['end_time'] = date('m-d H:i',$val['end_time']);
-    		}
-    	}
+        if (!empty($active_list['data'])) {
+            foreach ($active_list['data'] as $key => &$val) {
+                $val['pic'] = config('admin_path') . $val['pic'];
+                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
+                $val['end_time'] = date('m-d H:i', $val['end_time']);
+            }
+        }
 
-        array_unshift($active_types,['id'=>0,'title'=>'全部']);
-    	$return['active_types'] = $active_types;
-    	$return['banners'] = $banners;
-    	$return['active_list'] = $active_list;
-    	return json_msg(0,'成功',$return);
+        array_unshift($active_types, ['id' => 0, 'title' => '全部']);
+        $return['active_types'] = $active_types;
+        $return['banners'] = $banners;
+        $return['active_list'] = $active_list;
+        return json_msg(0, '成功', $return);
     }
 
     /**
@@ -178,30 +191,31 @@ class Index extends Common{
      * @param    [param]
      * @return   [type]     [description]
      */
-    public function activity_detail(){
+    public function activity_detail()
+    {
         $data = input();
-        $info = Db::name('act_serve')->where([['id','=',$data['activity']]])->field('id,title,see_num,cang_num,price,begin_time,end_time,hold_mode,content,pic,city,address,url,organ_infor,serve_category_id,serve_type_id,share_img')->find();
+        $info = Db::name('act_serve')->where([['id', '=', $data['activity']]])->field('id,title,organize_id,see_num,cang_num,price,begin_time,end_time,hold_mode,content,pic,city,address,url,organ_infor,serve_category_id,serve_type_id,share_img')->find();
         // 浏览量+1
-        $info['begin_time'] = date('m-d H:i',$info['begin_time']);
-        $info['end_time'] = date('m-d H:i',$info['end_time']);
+        $info['begin_time'] = date('m-d H:i', $info['begin_time']);
+        $info['end_time'] = date('m-d H:i', $info['end_time']);
         $info['pic'] = config('admin_path') . $info['pic'];
         $info['share_img'] = $info['share_img'] ? config('admin_path') . $info['share_img'] : '';
-        if( !empty($info['city']) ){
+        if (!empty($info['city'])) {
             $info['city'] = $this->city_arr[$info['city']]['city'];
         }
         // 是否收藏
         // $is_collection = Db::table('act_collection')->where([['userId'=>$data['userId']],['serve_id'=>$data['activity']]])->find();
-        $is_collection = Db::table('act_collection')->where('userId','=',$data['userId'])->where('serve_id','=',$data['activity'])->find();
-        if( !empty($is_collection['id']) ){
+        $is_collection = Db::table('act_collection')->where('userId', '=', $data['userId'])->where('serve_id', '=', $data['activity'])->find();
+        if (!empty($is_collection['id'])) {
             $info['cang'] = true;
-        }else{
+        } else {
             $info['cang'] = false;
         }
 
-        $is_join = Db::table('act_join')->where('userId','=',$data['userId'])->where('serve_id','=',$data['activity'])->find();
-        if( !empty($is_join['id']) ){
+        $is_join = Db::table('act_join')->where('userId', '=', $data['userId'])->where('serve_id', '=', $data['activity'])->find();
+        if (!empty($is_join['id'])) {
             $info['join'] = true;
-        }else{
+        } else {
             $info['join'] = false;
         }
         $serveTypeArr = Db::table('act_serve_type')->where('id', 'in', $info['serve_type_id'])->select();
@@ -209,7 +223,43 @@ class Index extends Common{
 
         $info['serve_category_id'] = $this->active_categorys[$info['serve_category_id']]['title'];
         Db::table('act_serve')->where('id', $data['activity'])->setInc('see_num');
-        return json_msg(0,'成功',$info);
+
+        $is_attention = Db::table('act_attention')->where('userId', '=', $data['userId'])->where('organize_id', '=', $info['organize_id'])->find();
+        if (!empty($is_attention)) {
+            $info['attention'] = true;
+        } else {
+            $info['attention'] = false;
+        }
+
+        $organize = Db::table('act_organize')->where('id', '=', $info['organize_id'])->find();
+        $info['organize'] = imgAddHost($organize, 'pic');
+        $info['organize']['fans'] = Db::table('act_organize')->join('act_attention', 'act_organize.id = act_attention.organize_id')->where('act_attention.userId', '=', $data['userId'])->count();
+        $info['organize']['activity_num'] = Db::table('act_serve')->where('organize_id', '=', $info['organize_id'])->count();
+
+        return json_msg(0, '成功', $info);
+    }
+
+    /**
+     * @throws \think\exception\DbException
+     */
+    public function organizeList()
+    {
+        $organize_id = input('organize_id');
+        $list = $this->serve->selectServes('list', array(['organize_id', '=', $organize_id]));
+        return json_msg(0, 'ok', $list);
+    }
+
+    public function organizeInfo()
+    {
+        $data = input();
+        $info = $this->organize->where('id', $data['organize_id'])->find()->toArray();
+        $is_attention = Db::table('act_attention')->where('userId', '=', $data['userId'])->where('organize_id', '=', $data['organize_id'])->count();
+        $info['attention'] = !empty($is_attention);
+        $info['fans'] = Db::table('act_organize')->join('act_attention', 'act_organize.id = act_attention.organize_id')->where('act_attention.userId', '=', $data['userId'])->count();
+        $info['activity_num'] = Db::table('act_serve')->where('organize_id', '=', $data['organize_id'])->count();
+
+        $info = imgAddHost($info, 'pic');
+        return json_msg(0, 'ok', $info);
     }
 
     /**
@@ -225,25 +275,26 @@ class Index extends Common{
      * @param    [order 排序 选填 (time_desc|time_asc)]
      * @return   [type]     [description]
      */
-    public function activity(){
-    	$data = input();
-    	switch ($data['orderType']) {
-    		// 分享列表
-    		case 'share_list':
-    			$this->share_list( $data );
-    			break;
-    		// 收藏列表
-    		case 'collection_list':
-    			$this->collection_list( $data );
-    			break;
+    public function activity()
+    {
+        $data = input();
+        switch ($data['orderType']) {
+            // 分享列表
+            case 'share_list':
+                $this->share_list($data);
+                break;
+            // 收藏列表
+            case 'collection_list':
+                $this->collection_list($data);
+                break;
             //我的想参加
             case 'join_list':
-                $this->join_list( $data );
+                $this->join_list($data);
                 break;
-    		default:
-    			# code...
-    			break;
-    	}
+            default:
+                # code...
+                break;
+        }
 
     }
 
@@ -255,15 +306,16 @@ class Index extends Common{
      * @param    [param]
      * @return   [type]     [description]
      */
-    public function share(){
-    	$data = input();
-    	$data['create_time'] = time();
-    	$is_exists = Db::name('act_share')->where([['userId','=',$data['userId']],['serve_id','=',$data['serve_id']]])->find();
-    	$msg = '分享成功';
-    	if( !$is_exists ){
-    		$res = Db::name('act_share')->insert($data);
-    	}
-		return json_msg(0,$msg);
+    public function share()
+    {
+        $data = input();
+        $data['create_time'] = time();
+        $is_exists = Db::name('act_share')->where([['userId', '=', $data['userId']], ['serve_id', '=', $data['serve_id']]])->find();
+        $msg = '分享成功';
+        if (!$is_exists) {
+            $res = Db::name('act_share')->insert($data);
+        }
+        return json_msg(0, $msg);
     }
 
     /**
@@ -274,23 +326,48 @@ class Index extends Common{
      * @param    [param]
      * @return   [type]     [description]
      */
-    public function collection(){
-    	$data = input();
-    	$data['create_time'] = time();
-    	$is_exists = Db::name('act_collection')->where([['userId','=',$data['userId']],['serve_id','=',$data['serve_id']]])->find();
-    	if( !$is_exists ){
-    		$res = Db::name('act_collection')->insert($data);
-    		$msg = '收藏成功';
+    public function collection()
+    {
+        $data = input();
+        $data['create_time'] = time();
+        $is_exists = Db::name('act_collection')->where([['userId', '=', $data['userId']], ['serve_id', '=', $data['serve_id']]])->find();
+        if (!$is_exists) {
+            $res = Db::name('act_collection')->insert($data);
+            $msg = '收藏成功';
             // 收藏量+1
             Db::table('act_serve')->where('id', $data['serve_id'])->setInc('cang_num');
-    	}else{
-    		$res = Db::table('act_collection')->delete($is_exists['id']);
-    		$msg = '取消收藏成功';
+        } else {
+            $res = Db::table('act_collection')->delete($is_exists['id']);
+            $msg = '取消收藏成功';
             // 收藏量-1
             Db::table('act_serve')->where('id', $data['serve_id'])->setDec('cang_num');
-    	}
+        }
 
-		return json_msg(0,$msg);
+        return json_msg(0, $msg);
+    }
+
+    /**
+     * 关注
+     * @throws \think\Exception
+     * @throws \think\exception\DbException
+     * @throws \think\exception\PDOException
+     * @throws db\exception\DataNotFoundException
+     * @throws db\exception\ModelNotFoundException
+     */
+    public function attention()
+    {
+        $data = input();
+        $data['create_time'] = time();
+        $is_exists = Db::name('act_attention')->where([['userId', '=', $data['userId']], ['organize_id', '=', $data['organize_id']]])->find();
+        if (!$is_exists) {
+            Db::name('act_attention')->insert($data);
+            $msg = '关注成功';
+        } else {
+            Db::table('act_attention')->delete($is_exists['id']);
+            $msg = '取消关注';
+        }
+
+        return json_msg(0, $msg);
     }
 
     /**
@@ -301,105 +378,109 @@ class Index extends Common{
      * @param    [param]
      * @return   [type]     [description]
      */
-    public function join(){
+    public function join()
+    {
         $data = input();
         $data['create_time'] = time();
-        $is_exists = Db::name('act_join')->where([['userId','=',$data['userId']],['serve_id','=',$data['serve_id']]])->find();
-        if( !$is_exists ){
-             Db::name('act_join')->insert($data);
+        $is_exists = Db::name('act_join')->where([['userId', '=', $data['userId']], ['serve_id', '=', $data['serve_id']]])->find();
+        if (!$is_exists) {
+            Db::name('act_join')->insert($data);
             $msg = '想参加';
             // 收藏量+1
             Db::table('act_serve')->where('id', $data['serve_id'])->setInc('join_num');
-        }else{
+        } else {
             $res = Db::table('act_join')->delete($is_exists['id']);
             $msg = '不想参加';
             // 收藏量-1
             Db::table('act_serve')->where('id', $data['serve_id'])->setDec('join_num');
         }
 
-        return json_msg(0,$msg);
+        return json_msg(0, $msg);
     }
 
     // 分享列表
-    public function share_list( $data ){
+    public function share_list($data)
+    {
 
-        $page = empty($data['page']) ? 1 : $data['page'] ;
+        $page = empty($data['page']) ? 1 : $data['page'];
 
-    	$list=Db::name('act_share')
+        $list = Db::name('act_share')
             ->alias('share')
             ->distinct(true)
-            ->where('share.userId','=',$data['userId'])
-            ->Join('act_serve sever','sever.id=share.serve_id')
+            ->where('share.userId', '=', $data['userId'])
+            ->Join('act_serve sever', 'sever.id=share.serve_id')
             ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('share.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
-        if( !empty($list) ){
+        if (!empty($list)) {
             foreach ($list['data'] as $key => &$val) {
                 $val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i',$val['begin_time']);
-                $val['end_time'] = date('m-d H:i',$val['end_time']);
+                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
+                $val['end_time'] = date('m-d H:i', $val['end_time']);
                 $val['serve_category_id'] = $this->active_categorys[$val['serve_category_id']]['title'];
             }
         }
 
-        return json_msg(0,'成功',$list);
+        return json_msg(0, '成功', $list);
     }
 
     // 收藏列表
-    public function collection_list( $data ){
+    public function collection_list($data)
+    {
 
-    	$page = empty($data['page']) ? 1 : $data['page'] ;
+        $page = empty($data['page']) ? 1 : $data['page'];
 
-        $list=Db::name('act_collection')
+        $list = Db::name('act_collection')
             ->alias('colle')
             ->distinct(true)
-            ->where('colle.userId','=',$data['userId'])
-            ->Join('act_serve sever','sever.id=colle.serve_id')
+            ->where('colle.userId', '=', $data['userId'])
+            ->Join('act_serve sever', 'sever.id=colle.serve_id')
             ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('colle.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
 
 
-        if( !empty($list) ){
+        if (!empty($list)) {
             foreach ($list['data'] as $key => &$val) {
                 $val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i',$val['begin_time']);
-                $val['end_time'] = date('m-d H:i',$val['end_time']);
+                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
+                $val['end_time'] = date('m-d H:i', $val['end_time']);
                 $val['serve_category_id'] = $this->active_categorys[$val['serve_category_id']]['title'];
             }
         }
 
-        return json_msg(0,'成功',$list);
+        return json_msg(0, '成功', $list);
     }
 
     // 想参加列表
-    public function join_list( $data ){
+    public function join_list($data)
+    {
 
-        $page = empty($data['page']) ? 1 : $data['page'] ;
+        $page = empty($data['page']) ? 1 : $data['page'];
 
-        $list=Db::name('act_join')
+        $list = Db::name('act_join')
             ->alias('join')
             ->distinct(true)
-            ->where('join.userId','=',$data['userId'])
-            ->Join('act_serve sever','sever.id=join.serve_id')
+            ->where('join.userId', '=', $data['userId'])
+            ->Join('act_serve sever', 'sever.id=join.serve_id')
             ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('join.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
 
 
-        if( !empty($list) ){
+        if (!empty($list)) {
             foreach ($list['data'] as $key => &$val) {
                 $val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i',$val['begin_time']);
-                $val['end_time'] = date('m-d H:i',$val['end_time']);
+                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
+                $val['end_time'] = date('m-d H:i', $val['end_time']);
                 $val['serve_category_id'] = $this->active_categorys[$val['serve_category_id']]['title'];
             }
         }
 
-        return json_msg(0,'成功',$list);
+        return json_msg(0, '成功', $list);
     }
 
     /**
@@ -410,14 +491,15 @@ class Index extends Common{
      * @param    [param]
      * @return   [type]     [description]
      */
-    public function search_list(){
+    public function search_list()
+    {
         $data = input();
-        $page = empty($data['page']) ? 1 : $data['page'] ;
+        $page = empty($data['page']) ? 1 : $data['page'];
 
         // 活动类型
-        $active_types = Db::name('act_serve_type')->field('id,title')->order('sort desc')->where('status','=',1)->select();
+        $active_types = Db::name('act_serve_type')->field('id,title')->order('sort desc')->where('status', '=', 1)->select();
 
-        $where[] = ['status','=',1];
+        $where[] = ['status', '=', 1];
 
         $order = $data['order'];
         $hold_mode = $data['hold_mode'];
@@ -443,12 +525,12 @@ class Index extends Common{
         //     $search_where[] = array('serve_type_id','<>','');
         // }
 
-        if( !empty( $keywords ) ){
-            $search_where[] = array('title','like', "%". $keywords ."%" );
+        if (!empty($keywords)) {
+            $search_where[] = array('title', 'like', "%" . $keywords . "%");
         }
 
         // 热门活动
-        if( (!empty($data['city']) && $data['city'] != '全国') || $data['serve_type_id'] != 1 ){
+        if ((!empty($data['city']) && $data['city'] != '全国') || $data['serve_type_id'] != 1) {
             /*
                 去寻找当前城市是否有所在省
                 if 当前城市有所在省的话，寻找所在省下面的相应数据
@@ -459,71 +541,71 @@ class Index extends Common{
             $search_city_arr = [];
             foreach ($this->city_arr_search as $key => $val) {
                 foreach ($val as $key2 => $val2) {
-                    if( $val2['city'] == $data['city'] && $val2['sheng_id'] != '' ){
-                    // 普通城市
+                    if ($val2['city'] == $data['city'] && $val2['sheng_id'] != '') {
+                        // 普通城市
                         $search_city_arr[] = array_column($this->city_arr_search[$val2['sheng_id']], 'city');
-                    }else if( $val2['city'] == $data['city'] && $val2['sheng_id'] == '' ){
-                    // 直辖市
+                    } else if ($val2['city'] == $data['city'] && $val2['sheng_id'] == '') {
+                        // 直辖市
                         $search_city_arr[] = $val2['city'];
                     }
                 }
             }
 
-            if( is_array($search_city_arr[0]) ){
+            if (is_array($search_city_arr[0])) {
                 $search_city_whereIn = implode(',', $search_city_arr[0]);
-            }else{
+            } else {
                 $search_city_whereIn = $search_city_arr[0];
             }
 
 
-        }else if( $data['city'] == '全国' ){
+        } else if ($data['city'] == '全国') {
             // 全国
             $search_where[] = ['search_city', '<>', ''];
         }
 
-        if( $data['serve_type_id'] != 0 && $data['serve_type_id'] !=1 ){
+        if ($data['serve_type_id'] != 0 && $data['serve_type_id'] != 1) {
             // 普通类型
             $search_where[] = ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"];
-        }else if( $data['serve_type_id'] == 1 || $data['serve_type_id'] == 0 ){
+        } else if ($data['serve_type_id'] == 1 || $data['serve_type_id'] == 0) {
             // 线上
             $search_where[] = ['hold_mode', '=', "1"];
-            if( $data['city'] != '全国' ){
-                $search_whereOr[] = ['search_city','=',$data['city']];
+            if ($data['city'] != '全国') {
+                $search_whereOr[] = ['search_city', '=', $data['city']];
             }
-        }else{
+        } else {
             // 全部
             $search_where[] = ['serve_type_id', '<>', ''];
         }
 
         $active_list = Db::name('act_serve')
-                        ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,city,address,search_serve_type as serve_type,hold_mode')
-                        ->order( $order )
-                        ->where( $search_where );
-                        if( !empty($search_whereOr) ){
-                            $active_list->whereOr( $search_whereOr );
-                        }
-                        if( !empty($search_city_whereIn) ){
-                            $active_list->whereIn( 'search_city', $search_city_whereIn );
+            ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,city,address,search_serve_type as serve_type,hold_mode')
+            ->order($order)
+            ->where($search_where);
+        if (!empty($search_whereOr)) {
+            $active_list->whereOr($search_whereOr);
+        }
+        if (!empty($search_city_whereIn)) {
+            $active_list->whereIn('search_city', $search_city_whereIn);
 
-                        }
-                        $active_list = $active_list->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
-                        ->toArray();
+        }
+        $active_list = $active_list->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
+            ->toArray();
 
-        if( !empty($active_list['data']) ){
+        if (!empty($active_list['data'])) {
             foreach ($active_list['data'] as $key => &$val) {
                 $val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i',$val['begin_time']);
-                $val['end_time'] = date('m-d H:i',$val['end_time']);
-                if( !empty($val['city']) ){
-		            $val['city'] = $this->city_arr[$val['city']]['city'];
-		        }
+                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
+                $val['end_time'] = date('m-d H:i', $val['end_time']);
+                if (!empty($val['city'])) {
+                    $val['city'] = $this->city_arr[$val['city']]['city'];
+                }
             }
         }
 
-        array_unshift($active_types,['id'=>0,'title'=>'全部']);
+        array_unshift($active_types, ['id' => 0, 'title' => '全部']);
         $return['active_types'] = $active_types;
         $return['active_list'] = $active_list;
-        return json_msg(0,'成功',$return);
+        return json_msg(0, '成功', $return);
     }
 
 
@@ -536,6 +618,7 @@ class Index extends Common{
         $data = input();
         $search_city_whereIn = (!empty($data['city']) && $data['city'] != '全国') ? $this->city->getOtherSameLevelCities($data['city']) : null;
         $param = $this->createParam($data);
+        $order = $this->createOrder($data);
         $onlineParam = array_merge($param, array(['hold_mode', '=', 1]));
         if (1 < $data['serve_type_id']) {
             // !0 1 当前城市,当前类型的所有线下
@@ -545,24 +628,49 @@ class Index extends Common{
                 ['hold_mode', '=', 2],
             );
             $where = array_merge($param, $add_where);
-            $list = $this->serve->selectServes($data['type'], $where);
+            $list = $this->serve->selectServes($data['type'], $where, $order);
         } elseif (1 == $data['serve_type_id']) {
             // 线上 1 所有的线上
-            $list = $this->serve->selectServes($data['type'], $onlineParam);
+            $list = $this->serve->selectServes($data['type'], $onlineParam, $order);
         } else {
             // 热门 | 全部 0 (所有线上类型 + 当前省的线下)
             $search_where2 = !empty($search_city_whereIn) ? array_merge($param, array(['search_city', ['in', $search_city_whereIn]])) : null;
-            $list = $this->serve->selectServes($data['type'], $onlineParam, $search_where2);
+            $list = $this->serve->selectServes($data['type'], $onlineParam, $order, $search_where2);
         }
         return json_msg(0, 'success', array(
             'active_types' => $this->serveType->getActiveTypes($data['type']),
-            'banners'      => $this->banner->getBanner(),
-            'active_list'  => $list,
+            'banners' => $this->banner->getBanner(),
+            'active_list' => $list,
+            'active_category' =>  $this->serveCategory->select(),
         ));
     }
 
+    private function createOrder($data)
+    {
+        //['id'=>'desc','create_time'=>'desc']
+        if ($data['type'] == 'list') {
+            switch ($data['flag']) {
+                case 101:
+                    $order['see_num'] = 'desc';
+                  break;
+                case 102:
+                    $order['cang_num'] = 'desc';
+                    break;
+                case 103:
+                    $order['shareNum'] = 'desc';
+                    break;
+                case 104:
+                    $order['create_time'] = 'desc';
+                    break;
+                default:
+                    $order['begin_time'] = 'asc';
+            }
+        }
+    }
 
-    private function createParam($data){
+
+    private function createParam($data)
+    {
         $param[] = ['t1.status', '=', 1];
         if (!empty($data['keywords'])) {
             $param[] = ['t1.title', 'like', "%" . $data['keywords'] . "%"];
@@ -575,6 +683,45 @@ class Index extends Common{
         }
 
         if ($data['type'] == 'list') {
+            if (preg_match("/type-(\d+)/", $data['flag'], $arr)) {
+                $param[] = ['t1.serve_type_id', 'like', '%' . $arr[1] . '%'];
+            }elseif(preg_match("/category-(\d+)/", $data['flag'], $arr)) {
+                $param[] = ['t1.serve_category_id', 'like', $arr[1]];
+            }else{
+                switch ($data['flag']) {
+                    case 1:
+                    case 201:
+                        break;
+                    case 2:
+                        $param[] = ['begin_time', 'between', strtotime(date('Ymd')) . ',' . strtotime(date('Ymd', strtotime("+1 day")))];
+                        break;
+                    case 3:
+                        $param[] = ['begin_time', 'between', strtotime(date('Ymd', strtotime("+1 day"))) . ',' . strtotime(date('Ymd', strtotime("+2 day")))];
+                        break;
+                    case 4:
+                        $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 , date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 + 7, date('Y'))];
+                        break;
+                    case 5:
+                        $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), 1, date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('t'), date('Y'))];
+                        break;
+                    case 6:
+                        $param[] = ['begin_time', 'between', strtotime(date('Y-01-01 00:00:00')) . ',' . strtotime(date('Y-01-01 00:00:00', strtotime("+1 year")))];
+                        break;
+                    case 7:
+                        $param[] = ['begin_time', '>', strtotime(date('Y-01-01 00:00:00', strtotime("+1 year")))];
+                        break;
+                    case 8:
+                        $param[] = ['end_time', '<', time()];
+                        break;
+                    case 202:
+                        $param[] = ['price', '=' ,0];
+                        break;
+                    case 203:
+                        $param[] = ['price', '>', 0];
+                        break;
+
+                }
+            }
 
         }
 

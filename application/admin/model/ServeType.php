@@ -18,15 +18,15 @@ class ServeType extends Model
 
         switch ($type) {
             case 'index':
-                $title = '热门';
+                $brr = ['id' => 0, 'title' => '热门'];
+                array_unshift($data, $brr);
                 break;
             case 'list':
             default:
-                $title = '全部';
+                //$brr = ['id' => 0, 'title' => '麻痹'];
+                //$title = '全部';
                 break;
         }
-
-        array_unshift($data, ['id' => 0, 'title' => $title]);
         return $data;
     }
 }

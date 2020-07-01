@@ -747,8 +747,13 @@ function change_key( $arr ){
 
 function imgAddHost(array $data, $field)
 {
-    foreach ($data as &$item) {
-        $item[$field] = config('admin_path') . $item[$field];
+    if (empty($data)) return $data;
+    if (count($data) == count($data, 1)) {
+        $data[$field] = config('admin_path') . $data[$field];
+    } else {
+        foreach ($data as &$item) {
+            $item[$field] = config('admin_path') . $item[$field];
+        }
     }
     return $data;
 }
