@@ -12,6 +12,10 @@ class Serve extends Model
     protected $pk = 'id';
 
 
+    protected $autoWriteTimestamp='int';
+//    protected $autoWriteTimestamp='true';//时间戳
+    protected $createTime="create_time";
+
     public function __construct($data = [])
     {
         parent::__construct($data);
@@ -24,7 +28,7 @@ class Serve extends Model
         $page = input('get.page') ? input('get.page') : 1;
         $em = $this
             ->alias('t1')
-            ->field('t1.id,t1.title,begin_time,end_time,city,currency,price,pic,serve_type_id,t2.name city,t3.title serve_category_id,address,search_serve_type as serve_type,hold_mode,search_city,count(t1.id) as shareNum')
+            ->field('t1.id,t1.title,begin_time,end_time,city,currency,price,pic,serve_type_id,t2.name city,t3.title serve_category_id,address,search_serve_type as serve_type,hold_mode,t1.create_time,search_city,count(t1.id) as shareNum')
             ->join('act_city t2', 't1.city = t2.id', 'left')
             ->join('act_serve_category t3', 't1.serve_category_id=t3.id', 'left')
             ->join('act_share sh', 't1.id = sh.serve_id', 'left')

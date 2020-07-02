@@ -194,7 +194,7 @@ class Index extends Common
     public function activity_detail()
     {
         $data = input();
-        $info = Db::name('act_serve')->where([['id', '=', $data['activity']]])->field('id,title,organize_id,see_num,cang_num,price,begin_time,end_time,hold_mode,content,pic,city,address,url,organ_infor,serve_category_id,serve_type_id,share_img')->find();
+        $info = Db::name('act_serve')->where([['id', '=', $data['activity']]])->field('*')->find();
         // 浏览量+1
         $info['begin_time'] = date('m-d H:i', $info['begin_time']);
         $info['end_time'] = date('m-d H:i', $info['end_time']);
@@ -663,9 +663,11 @@ class Index extends Common
                     $order['create_time'] = 'desc';
                     break;
                 default:
-                    $order['begin_time'] = 'asc';
+                    $order['t1.begin_time'] = 'asc';
             }
         }
+
+        return $order;
     }
 
 
