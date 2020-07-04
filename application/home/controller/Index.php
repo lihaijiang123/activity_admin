@@ -218,6 +218,9 @@ class Index extends Common
         } else {
             $info['join'] = false;
         }
+
+        $info['join_num'] = Db::table('act_join')->where('serve_id', '=', $data['activity'])->count();
+        
         $serveTypeArr = Db::table('act_serve_type')->where('id', 'in', $info['serve_type_id'])->select();
         $info['serve_type'] = array_column($serveTypeArr, 'title');
 
