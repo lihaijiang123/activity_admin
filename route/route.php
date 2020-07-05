@@ -39,7 +39,9 @@ return [
     '/help/[:userId]'=>'home/index/help',//客服
     '/organizeList/[:userId]'=>'home/index/organizeList',//主办方活动列表
     '/organizeInfo/[:userId]'=>'home/index/organizeInfo',//主办方信息
-    // 
+    '/info/[:userId]'=>'home/index/info',//个人信息
+    '/getInfo/[:userId]'=>'home/index/getInfo',//获取个人信息
+    //
 
 
 

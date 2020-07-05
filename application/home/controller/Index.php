@@ -220,7 +220,7 @@ class Index extends Common
         }
 
         $info['join_num'] = Db::table('act_join')->where('serve_id', '=', $data['activity'])->count();
-        
+
         $serveTypeArr = Db::table('act_serve_type')->where('id', 'in', $info['serve_type_id'])->select();
         $info['serve_type'] = array_column($serveTypeArr, 'title');
 
@@ -644,7 +644,7 @@ class Index extends Common
             'active_types' => $this->serveType->getActiveTypes($data['type']),
             'banners' => $this->banner->getBanner(),
             'active_list' => $list,
-            'active_category' =>  $this->serveCategory->select(),
+            'active_category' => $this->serveCategory->select(),
         ));
     }
 
@@ -655,7 +655,7 @@ class Index extends Common
             switch ($data['flag']) {
                 case 101:
                     $order['see_num'] = 'desc';
-                  break;
+                    break;
                 case 102:
                     $order['cang_num'] = 'desc';
                     break;
@@ -690,9 +690,9 @@ class Index extends Common
         if ($data['type'] == 'list') {
             if (preg_match("/type-(\d+)/", $data['flag'], $arr)) {
                 $param[] = ['t1.serve_type_id', 'like', '%' . $arr[1] . '%'];
-            }elseif(preg_match("/category-(\d+)/", $data['flag'], $arr)) {
+            } elseif (preg_match("/category-(\d+)/", $data['flag'], $arr)) {
                 $param[] = ['t1.serve_category_id', 'like', $arr[1]];
-            }else{
+            } else {
                 switch ($data['flag']) {
                     case 1:
                     case 201:
@@ -704,7 +704,7 @@ class Index extends Common
                         $param[] = ['begin_time', 'between', strtotime(date('Ymd', strtotime("+1 day"))) . ',' . strtotime(date('Ymd', strtotime("+2 day")))];
                         break;
                     case 4:
-                        $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 , date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 + 7, date('Y'))];
+                        $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 + 7, date('Y'))];
                         break;
                     case 5:
                         $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), 1, date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('t'), date('Y'))];
@@ -719,7 +719,7 @@ class Index extends Common
                         $param[] = ['end_time', '<', time()];
                         break;
                     case 202:
-                        $param[] = ['price', '=' ,0];
+                        $param[] = ['price', '=', 0];
                         break;
                     case 203:
                         $param[] = ['price', '>', 0];
@@ -739,4 +739,32 @@ class Index extends Common
         return json_msg(0, '', $data);
     }
 
+
+    public function info()
+    {
+        $fileds = input();
+        $data = json_decode($fileds['data'], true);
+        $data['uid'] = $fileds['userId'];
+
+        if (!empty($data['industry_other'])) $data['industry'] = $data['industry_other'];
+        unset($data['industry_other']);
+
+        $info = Db::table('act_info')->where('uid', $data['uid'])->find();
+        if ($info) {
+            $res = Db::table('act_info')->where('uid', $data['uid'])->data($data)->update();
+        } else {
+            $res = Db::table('act_info')->insert($data);
+        }
+        return json_msg(0, '', $res);
+    }
+
+    public function getInfo($userId)
+    {
+        $data['info'] = Db::table('act_info')->where('uid', $userId)->find();
+        $industry = Db::table('act_industry')->select();
+        $data['industry'] = array_column($industry, 'name');
+        array_push($data['industry'], '其他');
+
+        return json_msg(0, '', $data);
+    }
 }
