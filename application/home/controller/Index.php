@@ -5,10 +5,12 @@ namespace app\home\controller;
 use app\admin\model\Banner;
 use app\admin\model\City;
 
+use app\admin\model\Info;
 use app\admin\model\Organize;
 use app\admin\model\Serve;
 use app\admin\model\ServeCategory;
 use app\admin\model\ServeType;
+use app\admin\model\Sign;
 use think\db;
 
 // 首页控制器
@@ -33,6 +35,12 @@ class Index extends Common
     /* @var ServeCategory */
     private $serveCategory;
 
+    /* @var Info */
+    private $info;
+
+    /* @var Sign */
+    private $sign;
+
     public function initialize()
     {
         parent::initialize();
@@ -42,6 +50,8 @@ class Index extends Common
         $this->serve = new Serve();
         $this->organize = new Organize();
         $this->serveCategory = new ServeCategory();
+        $this->info = new Info();
+        $this->sign = new Sign();
 
         $city_con = file_get_contents('city_json_new.txt');
         $city_con_decode = json_decode($city_con, true);
@@ -220,6 +230,7 @@ class Index extends Common
         }
 
         $info['join_num'] = Db::table('act_join')->where('serve_id', '=', $data['activity'])->count();
+        $info['sign_num'] = Db::table('act_sign')->where('serve_id', '=', $data['activity'])->count();
 
         $serveTypeArr = Db::table('act_serve_type')->where('id', 'in', $info['serve_type_id'])->select();
         $info['serve_type'] = array_column($serveTypeArr, 'title');
@@ -745,26 +756,39 @@ class Index extends Common
         $fileds = input();
         $data = json_decode($fileds['data'], true);
         $data['uid'] = $fileds['userId'];
+        $data['serve_id'] = $fileds['serve_id'];
 
         if (!empty($data['industry_other'])) $data['industry'] = $data['industry_other'];
         unset($data['industry_other']);
 
-        $info = Db::table('act_info')->where('uid', $data['uid'])->find();
-        if ($info) {
-            $res = Db::table('act_info')->where('uid', $data['uid'])->data($data)->update();
-        } else {
-            $res = Db::table('act_info')->insert($data);
+        // 报名 新增返回0  更新返回1
+        $res = $this->sign->signUp($data);
+
+        if (0 === $res) {
+            $this->info->insertOrUpdate($data);
         }
+
         return json_msg(0, '', $res);
     }
 
-    public function getInfo($userId)
+    // get info
+    public function getInfo($userId, $serve_id)
     {
-        $data['info'] = Db::table('act_info')->where('uid', $userId)->find();
+        // 行业
         $industry = Db::table('act_industry')->select();
         $data['industry'] = array_column($industry, 'name');
         array_push($data['industry'], '其他');
 
+        $data['info'] = $this->sign->SignUpInfo(['uid'=>$userId, 'serve_id'=>$serve_id]);
+
+        if (empty($data['info'])) {
+            $data['info'] = Db::table('act_info')->where('uid', $userId)->find();
+            if (empty($data['info'])) {
+                $data['info']['industryColor'] = 'rgb(204, 205, 208)';
+                $data['info']['isNull'] = true;
+                $data['info']['industry'] = '请选择行业';
+            }
+        }
         return json_msg(0, '', $data);
     }
 }
