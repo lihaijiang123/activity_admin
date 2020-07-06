@@ -25,6 +25,7 @@
 <script type="text/html" id="action">
     <a href="{:url('edit')}?id={{d.user_id}}" class="layui-btn layui-btn-xs">编辑</a>    <!-- 主键 -->
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" href="{:url(serve)}?uid={{d.user_id}}">查看活动信息</a>
 </script>
 <!-- 需要（编辑的方法名称 主键id 的名称 end-->
 
@@ -65,8 +66,12 @@
                 {field: 'userName', title: '用户名', width: 100},
                 {field: 'pic', align: 'center',title: '头像', width: 120,toolbar: '#pic'},
                 {field: 'status', align: 'center',title: '状态', width: 120,toolbar: '#status'},
-                {field: 'remark', title: '备注', width: 100},
-                {width: 160, align: 'center', toolbar: '#action'}
+                {field: 'remark', title: '备注'},
+                {field: 'cang_num', title: '收藏数量'},
+                {field: 'share_num', title: '分享数量'},
+                {field: 'join_num', title: '想参加数量'},
+                {field: 'sign_num', title: '报名数量'},
+                {align: 'center', width: 230, title: '操作', toolbar: '#action'}
             ]],
             limit: 10,//每页默认显示的数量
              done: function (res, curr, count) {

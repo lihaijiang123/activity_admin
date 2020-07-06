@@ -26,6 +26,10 @@ class Users extends Common{
 			
             foreach ($list['data'] as $key => &$value) {
                 // 列表页 循环处理条件 都放在这里
+                $value['cang_num'] = Db::table('act_collection')->where('userId', $value['user_id'])->count();;
+                $value['share_num'] = Db::table('act_share')->where('userId', $value['user_id'])->count();
+                $value['join_num'] = Db::table('act_join')->where('userId', $value['user_id'])->count();
+                $value['sign_num'] = Db::table('act_sign')->where('uid', $value['user_id'])->count();
             }
             // 下拉单选处理select_index_radio
             return $result = ['code'=>0,'msg'=>'获取成功!','data'=>$list['data'],'count'=>$list['total'],'rel'=>1];
@@ -134,6 +138,15 @@ class Users extends Common{
 
     //?{{guanlian}}?
 
+    public function serve($uid)
+    {
 
+        $data['cang'] = Db::table('act_collection c')->field('s.title,c.*')->join('act_serve s', 'c.serve_id=s.id')->where('userId', $uid)->select();;
+        $data['share'] = Db::table('act_share s1')->field('s.title,s1.*')->join('act_serve s', 's1.serve_id=s.id')->where('userId', $uid)->select();
+        $data['join'] = Db::table('act_join j')->field('s.title,j.*')->join('act_serve s', 'j.serve_id=s.id')->where('userId', $uid)->select();
+        $data['sign'] = Db::table('act_sign s1')->field('s.title,s1.*')->join('act_serve s', 's1.serve_id=s.id')->where('uid', $uid)->select();
+
+        return $this->fetch('', ['data'=>$data]);
+    }
 
 }

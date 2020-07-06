@@ -38,6 +38,8 @@
 		</div>
 		<button class="layui-btn" id="search" data-type="reload">搜索</button>
 		<a href="{:url('index')}" class="layui-btn">显示全部</a>
+
+		<a href="{:url('execl')}" class="layui-btn layui-btn-warm">导出所有活动报名数据</a>
 	</div>
 	<!-- 不需要 -->
 
@@ -50,6 +52,8 @@
 <script type="text/html" id="action">
 	<a class="layui-btn layui-btn-xs" id="edit_btn" data-page="{{d.page}}" data-id="{{d.id}}">编辑</a>    <!-- 主键 -->
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+    <a class="layui-btn layui-btn-warm layui-btn-xs" href="{:url('execl')}?id={{d.id}}">导出报名数据</a>
+
 </script>
 <!-- 需要（编辑的方法名称 主键id 的名称 end-->
 
@@ -120,7 +124,7 @@
 					},
 
 					{
-						width: 160,
+						width: 210,
 						align: 'center',
 						title: '操作',
 						toolbar: '#action'
@@ -141,7 +145,7 @@
 					{
 						field: 'start',
 						title: '活动发布人',
-						width: 200
+						width: 100
 					},
 
 					{
@@ -149,14 +153,39 @@
 						title: '标题',
 						width: 200
 					},
-
 					{
-						field: 'pic',
-						align: 'center',
-						title: '图片',
-						width: 120,
-						toolbar: '#pic'
+						field: 'see_num',
+						title: '浏览量',
+						width: 100
 					},
+					{
+						field: 'cang_num',
+						title: '收藏量',
+						width: 100
+					},
+					{
+						field: 'fx_num',
+						title: '分享量',
+						width: 100
+					},
+					{
+						field: 'join_num',
+						title: '想参加',
+						width: 100
+					},
+					{
+						field: 'sign_num',
+						title: '已参加',
+						width: 100
+					},
+
+					// {
+					// 	field: 'pic',
+					// 	align: 'center',
+					// 	title: '图片',
+					// 	width: 120,
+					// 	toolbar: '#pic'
+					// },
 
 					{
 						field: 'real_time',

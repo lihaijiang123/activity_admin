@@ -1,11 +1,7 @@
 <?php
 namespace app\admin\controller;
-use app\admin\model\City;
 use think\Db;
-use think\Request;
-use think\Controller;
 use app\admin\model\Serve as ServeModel;
-use think\facade\Session;
 
 // 模型控制器
 class Serve extends Common{
@@ -81,7 +77,6 @@ class Serve extends Common{
             }
             $model = new ServeModel();
 			$list = $model->where($where)->order('id desc')->paginate(array('list_rows' => $pageSize, 'page' => $page))->toArray();
-
             foreach ($list['data'] as $key => &$value) {
                 // 列表页 循环处理条件 都放在这里
                 //index_for_list_data
@@ -91,7 +86,8 @@ class Serve extends Common{
               // }else{
               //   $value["end_time"] = date('Y-m-d H:i',$value["end_time"]);
               // }
-
+                $value['fx_num'] = Db::table('act_share')->where('serve_id', '=', $value['id'])->count();
+                $value['sign_num'] = Db::table('act_sign')->where('serve_id', '=', $value['id'])->count();
 
               // if(empty($value["begin_time"])){
               //   $value["begin_time"] = '';
@@ -331,5 +327,31 @@ class Serve extends Common{
     //?{{guanlian}}?
 
 
+    public function execl($id = '')
+    {
+        $where = [];
+        if (!empty($id)) $where = ['serve_id' => $id];
+        dump($where);
+        exit;
+        $data = Db::table('act_serve s1')->field('s1.title,s2.name,s2.phone,s2.email,s2.industry,s2.position,s2.note,s2.create_time')->join('act_sign s2', 's1.id = s2.serve_id')
+            ->where($where)->select();
+
+
+        foreach ($data as &$v) {
+            $v['create_time'] = date('Y/m/d H:i:s', $v['create_time']);
+        }
+
+        $xlsCell  = array(
+            array('title','活动名称'),
+            array('name','姓名'),
+            array('phone','手机号'),
+            array('email','邮箱'),
+            array('industry','行业'),
+            array('position','职位'),
+            array('note','备注'),
+            array('create_time','报名时间'),
+        );
+        exportExcel('活动报名数据', $xlsCell, $data);
+    }
 
 }

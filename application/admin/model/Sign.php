@@ -12,6 +12,8 @@ class Sign extends Model
     // 主键
     protected $pk = 'id';
 
+    protected $autoWriteTimestamp='int';
+    protected $createTime="create_time";
 
     // 如果存在就更新  如果不存在就插入
     public function signUp($data)

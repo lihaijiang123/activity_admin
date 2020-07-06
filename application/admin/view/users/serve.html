@@ -1,0 +1,128 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <div class="layui-form-item">
+        <a href="{:url('index')}" class="layui-btn layui-btn-info">{:lang('back')}</a>
+    </div>
+
+
+    <div class="layui-tab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">收藏活动</li>
+            <li>分享活动</li>
+            <li>想参加</li>
+            <li>报名</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="">
+                        <col width="250">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>活动名称</th>
+                        <th>收藏时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="data['cang']" id="vo"}
+                    <tr>
+                        <td>{$key + 1}</td>
+                        <td>{$vo['title']}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="">
+                        <col width="250">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>活动名称</th>
+                        <th>收藏时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="data['share']" id="vo"}
+                    <tr>
+                        <td>{$key + 1}</td>
+                        <td>{$vo['title']}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="">
+                        <col width="250">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>活动名称</th>
+                        <th>收藏时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="data['join']" id="vo"}
+                    <tr>
+                        <td>{$key + 1}</td>
+                        <td>{$vo['title']}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+            <div class="layui-tab-item">
+                <table class="layui-table">
+                    <colgroup>
+                        <col width="100">
+                        <col width="">
+                        <col width="250">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>活动名称</th>
+                        <th>收藏时间</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {volist name="data['sign']" id="vo"}
+                    <tr>
+                        <td>{$key + 1}</td>
+                        <td>{$vo['title']}</td>
+                        <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{include file="common/foot"/}
+<script>
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+</script>
+</body>
+</html>
