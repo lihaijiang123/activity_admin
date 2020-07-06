@@ -273,6 +273,7 @@ class Serve extends Common{
                 $data["begin_time"] = strtotime($data["begin_time"]);
               }
 
+              $data['start'] = session('username');
               // 用于搜索的城市
 
               $data['search_city'] = $this->city_arr[$data['city']]['city'];

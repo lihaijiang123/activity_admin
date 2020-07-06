@@ -101,7 +101,7 @@ class Index extends Common
     //退出登陆
     public function logout(){
         session(null);
-        $this->redirect('login/index');
+        $this->redirect('/webmaster');
     }
     
 

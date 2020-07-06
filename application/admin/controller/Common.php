@@ -9,7 +9,7 @@ class Common extends Controller
     {
         //判断管理员是否登录
         if (!session('aid')) {
-            $this->redirect('admin/login/index');
+            $this->redirect('/webmaster');
         }
         define('MODULE_NAME',strtolower(request()->controller()));
         define('ACTION_NAME',strtolower(request()->action()));
