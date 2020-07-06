@@ -1,0 +1,43 @@
+{include file="common/head"/}
+<div class="admin-main layui-anim layui-anim-upbit">
+    <div class="layui-form-item">
+        <a href="{:url('index')}" class="layui-btn layui-btn-info">{:lang('back')}</a>
+    </div>
+
+    <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show">
+            <table class="layui-table">
+                <colgroup>
+                    <col width="100">
+                    <col width="">
+                    <col width="250">
+                </colgroup>
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>用户名</th>
+                    <th>反馈内容</th>
+                    <th>反馈时间</th>
+                </tr>
+                </thead>
+                <tbody>
+                {volist name="data" id="vo"}
+                <tr>
+                    <td>{$key + 1}</td>
+                    <td>{$vo['userName']}</td>
+                    <td>{$vo['content']}</td>
+                    <td>{:date('Y-m-d H:i:s',$vo['create_time'])}</td>
+                </tr>
+                {/volist}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+{include file="common/foot"/}
+
+</body>
+</html>

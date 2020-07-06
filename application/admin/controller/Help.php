@@ -28,4 +28,11 @@ class Help extends Common
         $this->assign('info', $content['content']);
         return $this->fetch();
     }
+
+
+    public function feedback()
+    {
+        $data = Db::table('act_feedback f')->field('u.userName,f.*')->join('siging_users u', 'u.user_id=f.uid')->select();
+        return $this->fetch('', ['data'=>$data]);
+    }
 }

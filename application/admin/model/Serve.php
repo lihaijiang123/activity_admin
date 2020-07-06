@@ -37,7 +37,7 @@ class Serve extends Model
         $data = $em
             ->group('t1.id')
             ->order($order)
-            ->paginate(100, true, ['page' => $page])
+            ->paginate(4, true, ['page' => $page])
             ->getCollection()
             ->toArray();
 
