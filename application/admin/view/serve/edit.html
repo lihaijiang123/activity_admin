@@ -8,6 +8,44 @@
         color: red !important;
     }
 </style>
+
+<style type="text/css">
+    .uploader-list .info {
+        position: relative;
+        background-color: black;
+        color: white;
+        filter: alpha(Opacity=80);
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        width: 100px;
+        height: 25px;
+        text-align: center;
+        display: none;
+    }
+
+    .uploader-list .handle {
+        position: relative;
+        background-color: black;
+        color: white;
+        filter: alpha(Opacity=80);
+        -moz-opacity: 0.5;
+        opacity: 0.5;
+        width: 100px;
+        text-align: right;
+        height: 18px;
+        margin-bottom: -18px;
+        display: none;
+    }
+
+    .uploader-list .handle i {
+        margin-right: 5px;
+    }
+
+    .uploader-list .handle i:hover {
+        cursor: pointer;
+    }
+
+</style>
 <div class="admin-main layui-anim layui-anim-upbit" ng-app="hd" ng-controller="ctrl">
     <form class="layui-form layui-form-pane">
 
@@ -60,7 +98,7 @@
             <div class="layui-form-mid layui-word-aux required">*</div>
         </div>
 
-        <div class="layui-form-item fieldName">
+        <div class="layui-form-item uploader-list">
             <label class="layui-form-label">活动图片</label>
             <input type="hidden" class="pic" name="pic">
             <div class="layui-input-block">
@@ -69,14 +107,17 @@
                             class="icon icon-upload3"></i>点击上传
                     </button>
                     <div class="layui-upload-list">
-                        <img class="layui-upload-img" id="pic">
-                        <p class="demoText"></p>
+                        <div class="file-iteme">
+                            <div class="handle" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>
+                            <img id="pic" style="width: 100px;height: 100px;" src="">
+                        </div>
                     </div>
+                    <p class="demoText"></p>
                 </div>
             </div>
         </div>
 
-        <div class="layui-form-item fieldName">
+        <div class="layui-form-item uploader-list">
             <label class="layui-form-label">活动分享图片</label>
             <input type="hidden" class="pic" name="share_img">
             <div class="layui-input-block">
@@ -85,9 +126,12 @@
                             class="icon icon-upload3"></i>点击上传
                     </button>
                     <div class="layui-upload-list">
-                        <img class="layui-upload-img" id="share_img">
-                        <p class="demoText"></p>
+                        <div class="file-iteme">
+                            <div class="handle" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>
+                            <img id="share_img" style="width: 100px;height: 100px;" src="">
+                        </div>
                     </div>
+                    <p class="demoText"></p>
                 </div>
             </div>
         </div>
@@ -278,6 +322,24 @@
      });
 
 
+  $(document).on("mouseenter mouseleave", ".file-iteme", function(event){
+      if(event.type === "mouseenter"){
+          //鼠标悬浮
+          $(this).children(".info").fadeIn("fast");
+          $(this).children(".handle").fadeIn("fast");
+      }else if(event.type === "mouseleave") {
+          //鼠标离开
+          $(this).children(".info").hide();
+          $(this).children(".handle").hide();
+      }
+  });
+
+  // 删除图片
+  $(document).on("click", ".file-iteme .handle", function(event){
+      $(this).parents(".uploader-list").find("input[type=hidden]").val('')
+      $(this).parent().remove();
+  });
+
    layui.config({
         base: '/static/common/js/' //此处路径请自行处理, 可以使用绝对路径
     }).extend({
@@ -335,22 +397,28 @@
 
     var uploadInst = upload.render({
             elem: ".uploadImg" ,
-            url: "{:url("UpFiles/upload")}" ,
+            url: "{:url('UpFiles/upload')}" ,
             before: function(obj){
               var _this = this;
               obj.preview(function(index, file, result){
-                   _this.item.parents(".fieldName").find("img").attr("src",result)
+                  _this.item.parents(".uploader-list").find('.layui-upload-list').html(
+                      '<div id="" class="file-iteme">' +
+                      '<div class="handle"><i class="layui-icon layui-icon-delete"></i></div>' +
+                      '<img style="width: 100px;height: 100px;" src='+ result +'>' +
+                      '</div>'
+                  );
               });
+
             },
             done: function(res){
                 if(res.code>0){
-                  this.item.parents(".fieldName").find("input[type=hidden]").val(res.url)
+                  this.item.parents(".uploader-list").find("input[type=hidden]").val(res.url)
                 }else{
                   return layer.msg("上传失败");
                 }
             } ,
               error: function(res){
-                var demoText = this.item.parents(".fieldName").find(".demoText");
+                var demoText = this.item.parents(".uploader-list").find(".demoText");
                  demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-mini demo-reload">重试</a>');
                  demoText.find(".demo-reload").on("click", function(){
                   uploadInst.upload();
