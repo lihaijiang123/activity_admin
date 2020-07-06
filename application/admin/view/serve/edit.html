@@ -154,6 +154,13 @@
     <div class="layui-form-item">
         <label class="layui-form-label">举办地址</label>
         <div class="layui-input-12">
+            <div class="layui-input-1">
+                <select name="country" lay-filter="required" id="country">
+                    <option value="">国家类型{$info_array['country']}</option>
+                    <option value="1" {if $info_array['country'] == '1'}selected{/if}> 国内</option>
+                    <option value="2" {if $info_array['country'] == '2'}selected{/if}> 国外</option>
+                </select>
+            </div>
             <div class="layui-input-2">
                 <select name="city"  lay-filter="city"  lay-verify=""  xm-select="city"  xm-select-search="" xm-select-max="1">
                     <option value="">请选择举办城市</option>

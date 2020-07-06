@@ -87,7 +87,7 @@
                 <div class="layui-input-2">
                     <input type="text" name="price" class="layui-input">
                 </div>
-                <div class="layui-input-2">
+                <div class="layui-input-3">
                     <select name="currency" lay-filter="currency" id="currency">
                         <option value="">请选择货币</option>
                         <option value="¥">¥</option>
@@ -116,8 +116,7 @@
             <div class="layui-inline layui-col-md3">
                 <label class="layui-form-label"> 收藏量 </label>
                 <div class="layui-input-5">
-                    <input type="text" name="cang_num" ng-model="field.cang_num" class="layui-input"
-                           placeholder="默认值0" autocomplete="off" readonly="readonly">
+                    <input type="text" name="cang_num" ng-model="field.cang_num" class="layui-input" placeholder="默认值0" autocomplete="off" readonly="readonly">
                 </div>
             </div>
         </div>
@@ -125,10 +124,17 @@
         <div class="layui-form-item">
             <label class="layui-form-label">举办地址</label>
             <div class="layui-input-12">
+                <div class="layui-input-1">
+                    <select name="country" lay-filter="required" id="country">
+                        <option value="">国家类型</option>
+                        <option value="1"> 国内</option>
+                        <option value="2"> 国外</option>
+                    </select>
+                </div>
                 <div class="layui-input-2">
                     <select name="city" lay-filter="city" id="city" xm-select="city" xm-select-max="1"
                             xm-select-search="">
-                        <option value="">请选择举办城市</option>
+                        <option value="">举办城市或国家</option>
                         {foreach $city_arr as $key=>$val }
                         <option value="{$val.id}"> {$val.city}</option>
                         {/foreach}

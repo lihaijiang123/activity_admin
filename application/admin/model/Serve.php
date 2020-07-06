@@ -41,6 +41,8 @@ class Serve extends Model
             ->getCollection()
             ->toArray();
 
+        dump($data);
+        exit;
         $data = $this->formatTime($data, 'begin_time', $type);
         $data = $this->formatAddr($data);
         return imgAddHost($data, 'pic');

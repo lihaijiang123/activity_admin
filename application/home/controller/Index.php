@@ -779,7 +779,7 @@ class Index extends Common
         $data['industry'] = array_column($industry, 'name');
         array_push($data['industry'], '其他');
 
-        $data['info'] = $this->sign->SignUpInfo(['uid'=>$userId, 'serve_id'=>$serve_id]);
+        $data['info'] = $this->sign->SignUpInfo(['uid' => $userId, 'serve_id' => $serve_id]);
 
         if (empty($data['info'])) {
             $data['info'] = Db::table('act_info')->where('uid', $userId)->find();
@@ -789,6 +789,35 @@ class Index extends Common
                 $data['info']['industry'] = '请选择行业';
             }
         }
+        return json_msg(0, '', $data);
+    }
+
+    /**
+     * 建议反馈
+     * @param $userId
+     */
+    public function feeBack($userId)
+    {
+        $content = input('content');
+
+        $data = [
+            'uid' => $userId,
+            'content' => $content,
+            'create_time' => time(),
+        ];
+        $res = Db::table('act_feedback')->insert($data);
+        return json_msg(0, '', $res);
+    }
+
+
+    /**
+     * 热门国家 & 城市
+     */
+    public function hotCountry()
+    {
+        $data['country'] = Db::table('act_hot_country')->select();
+        $data['city'] = $this->city->getCityList();
+
         return json_msg(0, '', $data);
     }
 }

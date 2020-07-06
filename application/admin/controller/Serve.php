@@ -1,5 +1,6 @@
 <?php
 namespace app\admin\controller;
+use app\admin\model\City;
 use think\Db;
 use think\Request;
 use think\Controller;
@@ -17,11 +18,21 @@ class Serve extends Common{
         // 活动类别
         $this->serve_category_id_array = change_key(Db::name('act_serve_category')->where('status','=',1)->field('id,title')->order('sort desc')->select());
         // 城市内容
-        $city_con = file_get_contents('city_json.txt');
-        $city_con_decode = json_decode($city_con,true);
+        $arr = Db::name('act_city')->select();
+        $city_con_decode = array_filter($arr, function ($item){
+            return ($item['id'] == $item['pid']) ? false : $item;
+        });
+
+        $country = Db::name('act_hot_country')->select();
+
         foreach ($city_con_decode as $key => $val) {
             $this->city_arr[$key]['id'] = $val['id'];
-            $this->city_arr[$key]['city'] = $val['city'];
+            $this->city_arr[$key]['city'] = $val['name'];
+        }
+
+        foreach ($country as $k => $v) {
+            $this->city_arr[$v['cityCode']]['id'] = $v['cityCode'];
+            $this->city_arr[$v['cityCode']]['city'] = $v['city'];
         }
 
         $organize = new \app\admin\model\Organize();
