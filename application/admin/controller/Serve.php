@@ -216,6 +216,8 @@ class Serve extends Common{
             // 下拉单选处理select_edit_radio
 
   $this->assign('content',$info['content']);
+  $this->assign('live',$info['live']);
+  $this->assign('charge',$info['charge']);
 
             // 判断   edit_explode
 

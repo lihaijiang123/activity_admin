@@ -28,8 +28,8 @@ class Serve extends Model
         $page = input('get.page') ? input('get.page') : 1;
         $em = $this
             ->alias('t1')
-            ->field('t1.id,t1.title,begin_time,end_time,city,currency,price,pic,serve_type_id,t2.name city,t3.title serve_category_id,address,search_serve_type as serve_type,hold_mode,t1.create_time,search_city,count(t1.id) as shareNum')
-            ->join('act_city t2', 't1.city = t2.id', 'left')
+            ->field('t1.id,t1.title,begin_time,end_time,currency,price,pic,serve_type_id,t3.title serve_category_id,address,search_serve_type as serve_type,hold_mode,t1.create_time,search_city,count(t1.id) as shareNum')
+            //->join('act_city t2', 't1.city = t2.id', 'left')
             ->join('act_serve_category t3', 't1.serve_category_id=t3.id', 'left')
             ->join('act_share sh', 't1.id = sh.serve_id', 'left')
             ->where([$search_where1]);
@@ -37,7 +37,7 @@ class Serve extends Model
         $data = $em
             ->group('t1.id')
             ->order($order)
-            ->paginate(4, true, ['page' => $page])
+            ->paginate(8, true, ['page' => $page])
             ->getCollection()
             ->toArray();
 
@@ -46,7 +46,7 @@ class Serve extends Model
         return imgAddHost($data, 'pic');
     }
 
-    private function formatTime($data, $field, $type)
+    public function formatTime($data, $field, $type)
     {
         if ($type == 'index') {
             $weekArray = array("日", "一", "二", "三", "四", "五", "六");
@@ -63,6 +63,14 @@ class Serve extends Model
                     $v[$field] = date('Y.m.d', $v['begin_time']) . '-' . date('m.d', $v['end_time']);
                 }
             }
+        } elseif ($type == 'detail') {
+            if ($data['end_time'] - $data['begin_time'] <= 24 * 60 * 60) {
+                $data[$field] = date('Y.m.d H:i');
+            } elseif (date('Y', $data['begin_time']) != date('Y', $data['end_time'])) {
+                $data[$field] = date('Y.m.d', $data['begin_time']) . '-' . date('Y.m.d', $data['end_time']);
+            } else {
+                $data[$field] = date('Y.m.d', $data['begin_time']) . '-' . date('m.d', $data['end_time']);
+            }
         }
 
         return $data;
@@ -71,7 +79,8 @@ class Serve extends Model
     private function formatAddr($data)
     {
         foreach ($data as &$v) {
-            $v['city'] = mb_substr($v['city'] . $v['address'], 0, 6) . '...';
+
+            $v['city'] = mb_strlen($v['search_city']) > 6 ? (mb_substr($v['search_city'], 0, 6) . '...') : $v['search_city'];
         }
         return $data;
     }

@@ -206,13 +206,12 @@ class Index extends Common
         $data = input();
         $info = Db::name('act_serve')->where([['id', '=', $data['activity']]])->field('*')->find();
         // 浏览量+1
-        $info['begin_time'] = date('m-d H:i', $info['begin_time']);
-        $info['end_time'] = date('m-d H:i', $info['end_time']);
         $info['pic'] = config('admin_path') . $info['pic'];
         $info['share_img'] = $info['share_img'] ? config('admin_path') . $info['share_img'] : '';
         if (!empty($info['city'])) {
-            $info['city'] = $this->city_arr[$info['city']]['city'];
+            $info['city'] = $info['search_city'];
         }
+        $info = $this->serve->formatTime($info, 'begin_time', 'detail');
         // 是否收藏
         // $is_collection = Db::table('act_collection')->where([['userId'=>$data['userId']],['serve_id'=>$data['activity']]])->find();
         $is_collection = Db::table('act_collection')->where('userId', '=', $data['userId'])->where('serve_id', '=', $data['activity'])->find();

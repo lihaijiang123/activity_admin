@@ -280,6 +280,22 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <label class="layui-form-label">直播信息</label>
+            <div class="controls layui-input-4">
+                <textarea class="layui-textarea" style=" width: 100%; display: none; "></textarea>
+                <script id="live" name="live" type="text/plain"></script>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">收费信息</label>
+            <div class="controls layui-input-4">
+                <textarea class="layui-textarea" style=" width: 100%; display: none; "></textarea>
+                <script id="charge" name="charge" type="text/plain"></script>
+            </div>
+        </div>
+
 
         <!-- <div class="layui-form-item">
             <label class="layui-form-label"> 举办方 </label>
@@ -327,6 +343,38 @@
             'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
             'print', 'preview', 'searchreplace', 'drafts', 'help']]
      });
+
+   UE.getEditor('live',{
+       initialFrameWidth : 600,
+       initialFrameHeight: 450,
+       toolbars: [['source', '|', 'undo', 'redo', '|',
+           'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+           'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+           'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+           'directionalityltr', 'directionalityrtl', 'indent', '|',
+           'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+           'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+           'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 'pagebreak', 'template', 'background', '|',
+           'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+           'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+           'print', 'preview', 'searchreplace', 'drafts', 'help']]
+   });
+
+   UE.getEditor('charge',{
+       initialFrameWidth : 600,
+       initialFrameHeight: 450,
+       toolbars: [['source', '|', 'undo', 'redo', '|',
+           'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc', '|',
+           'rowspacingtop', 'rowspacingbottom', 'lineheight', '|',
+           'customstyle', 'paragraph', 'fontfamily', 'fontsize', '|',
+           'directionalityltr', 'directionalityrtl', 'indent', '|',
+           'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'touppercase', 'tolowercase', '|',
+           'link', 'unlink', 'anchor', '|', 'imagenone', 'imageleft', 'imageright', 'imagecenter', '|',
+           'simpleupload', 'insertimage', 'emotion', 'scrawl', 'insertvideo', 'music', 'attachment', 'map', 'gmap', 'insertframe', 'insertcode', 'webapp', 'pagebreak', 'template', 'background', '|',
+           'horizontal', 'date', 'time', 'spechars', 'snapscreen', 'wordimage', '|',
+           'inserttable', 'deletetable', 'insertparagraphbeforetable', 'insertrow', 'deleterow', 'insertcol', 'deletecol', 'mergecells', 'mergeright', 'mergedown', 'splittocells', 'splittorows', 'splittocols', 'charts', '|',
+           'print', 'preview', 'searchreplace', 'drafts', 'help']]
+   });
 
     var m = angular.module('hd',[]);
 
