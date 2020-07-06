@@ -59,7 +59,7 @@ return [
     // 'senmsg'=>'home/index/senmsg',
     // 'down/:id'=>'home/index/down',
     // 'tags/:keyword'=>'home/tags/index',
-
+    'webmaster'=>'admin/login/index'
 ];
 
 /*Route::group('apply', function(){
