@@ -635,7 +635,7 @@ class Index extends Common
 
         if (!empty($data['city'])) {
             if (!in_array($data['city'], ['全球', '国内', '国外'])) {
-                $search_city_whereIn = ['search_city', ['in', $this->city->getOtherSameLevelCities($data['city'])]];
+                $search_city_whereIn = [['search_city', ['in', $this->city->getOtherSameLevelCities($data['city'])]]];
             } else {
 
                 switch ($data['city']) {
