@@ -21,7 +21,7 @@ class Country extends Common
         if (request()->isPost()) {
 
             $model = new Model();
-            $list = $model->select();
+            $list = $model->order('sort desc')->select();
             return $result = ['code' => 0, 'msg' => '获取成功!', 'data' => $list, 'count' => count($list)];
         }
         $this->assign('pageId', input('page'));

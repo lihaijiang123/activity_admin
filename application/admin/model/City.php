@@ -12,6 +12,7 @@ class City extends Model
     // 主键
     protected $pk = 'id';
 
+    private static $zhixia = ['北京市','天津市','上海市','重庆市'];
 
     /**
      * 传递过来的城市同级别的城市
@@ -38,7 +39,7 @@ class City extends Model
     }
 
 
-    public function getCityList()
+    public function getCityListTree()
     {
         $data = $this
             ->field('city.name as name, city1.name as sheng')
@@ -48,9 +49,26 @@ class City extends Model
             ->toArray();
         $arr = [];
         foreach ($data as $k => $v){
-            $arr[$v['sheng']][] = $v['name'];
+            if (in_array($v['sheng'], self::$zhixia) || $v['sheng'] != $v['name']) {
+                $arr[$v['sheng']][] = $v['name'];
+            }
         }
 
         return $arr;
+    }
+
+
+    public function getCityList()
+    {
+        $arr = $this->selectOrFail()->toArray();
+
+        return array_filter($arr, function ($item){
+            if (in_array($item['name'], self::$zhixia) || $item['pid'] != $item['id']) {
+                return true;
+            }else{
+                return false;
+            }
+        });
+
     }
 }

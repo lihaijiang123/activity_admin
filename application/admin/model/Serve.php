@@ -56,7 +56,7 @@ class Serve extends Model
         } elseif ($type == 'list') {
             foreach ($data as &$v) {
                 if ($v['end_time'] - $v['begin_time'] <= 24 * 60 * 60) {
-                    $v[$field] = date('Y.m.d H:i');
+                    $v[$field] = date('Y.m.d H:i', $v['end_time']);
                 } elseif (date('Y', $v['begin_time']) != date('Y', $v['end_time'])) {
                     $v[$field] = date('Y.m.d', $v['begin_time']) . '-' . date('Y.m.d', $v['end_time']);
                 } else {
@@ -65,7 +65,7 @@ class Serve extends Model
             }
         } elseif ($type == 'detail') {
             if ($data['end_time'] - $data['begin_time'] <= 24 * 60 * 60) {
-                $data[$field] = date('Y.m.d H:i');
+                $data[$field] = date('Y.m.d H:i', $data['end_time']);
             } elseif (date('Y', $data['begin_time']) != date('Y', $data['end_time'])) {
                 $data[$field] = date('Y.m.d', $data['begin_time']) . '-' . date('Y.m.d', $data['end_time']);
             } else {

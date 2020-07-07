@@ -838,8 +838,11 @@ class Index extends Common
      */
     public function hotCountry()
     {
-        $data['country'] = Db::table('act_hot_country')->select();
-        $data['city'] = $this->city->getCityList();
+        $data['country'] = Db::table('act_hot_country')->order('sort desc')->select();
+        $data['city'] = $this->city->getCityListTree();
+
+
+
 
         return json_msg(0, '', $data);
     }
