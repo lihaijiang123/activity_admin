@@ -51,7 +51,7 @@
 
     <div class="layui-form-item">
         <label class="layui-form-label">所属活动类型</label>
-        <div class="layui-input-4">
+        <div class="layui-input-8">
           <select name="serve_type_id"  lay-filter="serve_type_id"  lay-verify="required"  xm-select="serve_type_id"  xm-select-search="">
             <option value="">请选择活动类型</option>
             {foreach $serve_type_id_array as $key=>$val }
@@ -62,9 +62,10 @@
       <div class="layui-form-mid layui-word-aux required">*</div>
     </div>
 
-        <div class="layui-form-item">
+    <div class="layui-form-item">
+        <div class="layui-inline  layui-col-md5">
             <label class="layui-form-label">活动类别</label>
-            <div class="layui-input-4">
+            <div class="layui-input-7">
                 <select name="serve_category_id" lay-filter="serve_category_id" lay-verify="required"
                         xm-select="serve_category_id" xm-select-search="" xm-select-max="1">
                     <option value="">请选择活动类别</option>
@@ -76,197 +77,222 @@
             <div class="layui-form-mid layui-word-aux required">*</div>
         </div>
 
-        <div class="layui-form-item">
-            <label class="layui-form-label">主办方</label>
-            <div class="layui-input-4">
-                <select name="organize_id" lay-filter="organize_id" lay-verify="required" xm-select="organize_id" xm-select-search="" xm-select-max="1">
-                    <option value="">请选择所属活动</option>
-                    {foreach $organize as $key=>$val }
-                    <option  {if $info_array['organize_id'] == $val.id}selected{/if}  value="{$val.id}"> {$val.name}</option>
-                    {/foreach}
-                </select>
-            </div>
-            <div class="layui-form-mid layui-word-aux required">*</div>
-        </div>
-
-        <div class="layui-form-item">
+        <div class="layui-inline layui-col-md5">
             <label class="layui-form-label"> 活动标题 </label>
-            <div class="layui-input-4">
-                <input type="text" name="title" ng-model="field.title" lay-verify="required" class="layui-input"
-                       autocomplete="off">
+            <div class="layui-input-7">
+                <input type="text" name="title" ng-model="field.title" lay-verify="required" class="layui-input" autocomplete="off">
             </div>
             <div class="layui-form-mid layui-word-aux required">*</div>
         </div>
+    </div>
 
-        <div class="layui-form-item uploader-list">
-            <label class="layui-form-label">活动图片</label>
-            <input type="hidden" class="pic" name="pic">
-            <div class="layui-input-block">
-                <div class="layui-upload">
-                    <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
-                            class="icon icon-upload3"></i>点击上传
-                    </button>
-                    <div class="layui-upload-list">
-                        <div class="file-iteme">
-                            <div class="handle" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>
-                            <img id="pic" style="width: 100px;height: 100px;" src="">
-                        </div>
-                    </div>
-                    <p class="demoText"></p>
-                </div>
-            </div>
-        </div>
-
-        <div class="layui-form-item uploader-list">
-            <label class="layui-form-label">活动分享图片</label>
-            <input type="hidden" class="pic" name="share_img">
-            <div class="layui-input-block">
-                <div class="layui-upload">
-                    <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
-                            class="icon icon-upload3"></i>点击上传
-                    </button>
-                    <div class="layui-upload-list">
-                        <div class="file-iteme">
-                            <div class="handle" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>
-                            <img id="share_img" style="width: 100px;height: 100px;" src="">
-                        </div>
-                    </div>
-                    <p class="demoText"></p>
-                </div>
-            </div>
-        </div>
-
-<div class="layui-form-item">
-  <label class="layui-form-label">开始时间</label>
-  <div class="layui-input-inline">
-    <input type="text" id="begin_time" lay-verify="required" autocomplete="off" name="begin_time" value="{$begin_time}"  placeholder="" class="layui-input">
-  </div>
-  <div class="layui-form-mid layui-word-aux required">*</div>
-</div>
-
-<div class="layui-form-item">
-  <label class="layui-form-label">结束时间</label>
-  <div class="layui-input-inline">
-    <input type="text" id="end_time" lay-verify="required" autocomplete="off" name="end_time" value="{$end_time}"  placeholder="" class="layui-input">
-  </div>
-  <div class="layui-form-mid layui-word-aux required">*</div>
-</div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label">价格</label>
-        <div class="layui-input-4">
-            <input type="text" name="price" ng-model="field.price" class="layui-input">
-        </div>
-        <div class="layui-input-2">
-            <select name="currency" lay-filter="currency" id="currency">
-                <option value="">请选择货币</option>
-                <option {if $info_array['currency'] == '¥'}selected{/if} value="¥">¥</option>
-                <option {if $info_array['currency'] == '$'}selected{/if} value="$">$</option>
-                <option {if $info_array['currency'] == '€'}selected{/if} value="€">€</option>
+        <label class="layui-form-label">主办方</label>
+        <div class="layui-input-8">
+            <select name="organize_id" lay-filter="organize_id" lay-verify="required" xm-select="organize_id" xm-select-search="" xm-select-max="1">
+                <option value="">请选择所属活动</option>
+                {foreach $organize as $key=>$val }
+                <option  {if $info_array['organize_id'] == $val.id}selected{/if}  value="{$val.id}"> {$val.name}</option>
+                {/foreach}
             </select>
         </div>
+        <div class="layui-form-mid layui-word-aux required">*</div>
     </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 浏览量 </label>
-        <div class="layui-input-4">
-            <input type="text" name="see_num" ng-model="field.see_num" class="layui-input" autocomplete="off" readonly="readonly">
-        </div>
-    </div>
 
     <div class="layui-form-item">
-        <label class="layui-form-label"> 收藏量 </label>
-        <div class="layui-input-4">
-            <input type="text" name="cang_num" ng-model="field.cang_num" class="layui-input" autocomplete="off" readonly="readonly">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 想参加人数 </label>
-        <div class="layui-input-4">
-            <input type="text" name="join_num" ng-model="field.join_num" class="layui-input" autocomplete="off" readonly="readonly">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 排序 </label>
-        <div class="layui-input-4">
-            <input type="text" name="sort" ng-model="field.sort" class="layui-input" autocomplete="off">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">举办地址</label>
-        <div class="layui-input-12">
-            <div class="layui-input-1">
-                <select name="country" lay-filter="required" id="country">
-                    <option value="">国家类型{$info_array['country']}</option>
-                    <option value="1" {if $info_array['country'] == '1'}selected{/if}> 国内</option>
-                    <option value="2" {if $info_array['country'] == '2'}selected{/if}> 国外</option>
-                </select>
+        <div class="layui-inline layui-col-md5">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-7">
+                <input type="text" id="begin_time" lay-verify="required" autocomplete="off" name="begin_time" value="{$begin_time}"  placeholder="" class="layui-input">
             </div>
-            <div class="layui-input-2">
-                <select name="city"  lay-filter="city"  lay-verify=""  xm-select="city"  xm-select-search="" xm-select-max="1">
-                    <option value="">请选择举办城市</option>
-                    {foreach $city_arr as $key=>$val }
+            <div class="layui-form-mid layui-word-aux required">*</div>
+        </div>
+
+        <div class="layui-inline layui-col-md5">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-7">
+                <input type="text" id="end_time" lay-verify="required" autocomplete="off" name="end_time" value="{$end_time}"  placeholder="" class="layui-input">
+            </div>
+            <div class="layui-form-mid layui-word-aux required">*</div>
+        </div>
+    </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">价格</label>
+                <div class="layui-input-2">
+                    <input type="text" name="price" ng-model="field.price" class="layui-input">
+                </div>
+                <div class="layui-input-3">
+                    <select name="currency" lay-filter="currency" id="currency">
+                        <option value="">请选择货币</option>
+                        <option {if $info_array['currency'] == '¥'}selected{/if} value="¥">¥</option>
+                        <option {if $info_array['currency'] == '$'}selected{/if} value="$">$</option>
+                        <option {if $info_array['currency'] == '€'}selected{/if} value="€">€</option>
+                    </select>
+                </div>
+            </div>
+
+
+
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 排序 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="sort" ng-model="field.sort" class="layui-input" autocomplete="off">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 浏览量 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="see_num" ng-model="field.see_num" class="layui-input" autocomplete="off" readonly="readonly">
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 收藏量 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="cang_num" ng-model="field.cang_num" class="layui-input" autocomplete="off" readonly="readonly">
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label"> 想参加人数 </label>
+                <div class="layui-input-5">
+                    <input type="text" name="join_num" ng-model="field.join_num" class="layui-input" autocomplete="off" readonly="readonly">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">举办地址</label>
+            <div class="layui-input-12">
+                <div class="layui-input-1">
+                    <select name="country" lay-filter="required" id="country">
+                        <option value="">国家类型{$info_array['country']}</option>
+                        <option value="1" {if $info_array['country'] == '1'}selected{/if}> 国内</option>
+                        <option value="2" {if $info_array['country'] == '2'}selected{/if}> 国外</option>
+                    </select>
+                </div>
+                <div class="layui-input-2">
+                    <select name="city"  lay-filter="city"  lay-verify=""  xm-select="city"  xm-select-search="" xm-select-max="1">
+                        <option value="">请选择举办城市</option>
+                        {foreach $city_arr as $key=>$val }
                         <option value="{$val.id}" {in name="$val['id']" value="$info_array['city']"} selected {/in} > {$val.city} </option>
-                    {/foreach}
-                </select>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="layui-input-3">
+                    <input type="text" name="address" ng-model="field.address" class="layui-input"  placeholder="详细地址" autocomplete="off">
+                </div>
             </div>
+            <div class="layui-form-mid layui-word-aux required">线上活动该项不需要填写</div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 网址 </label>
+            <div class="layui-input-8">
+                <input type="text" name="url" ng-model="field.url" class="layui-input" autocomplete="off">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 组织信息 </label>
+            <div class="layui-input-8">
+                <textarea name="organ_infor" placeholder="请输入组织信息" class="layui-textarea" maxlength="500">{$info_array['organ_infor']}</textarea>
+            </div>
+        </div>
+
+
+
+        <div class="layui-form-item">
+
+            <div class="layui-inline layui-col-md3 uploader-list">
+                <label class="layui-form-label">活动图片</label>
+                <input type="hidden" class="pic" name="pic">
+                <div class="layui-input-block">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
+                                class="icon icon-upload3"></i>点击上传
+                        </button>
+                        <div class="layui-upload-list">
+                            <div class="file-iteme">
+                                <div class="handle" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>
+                                <img id="pic" style="width: 100px;height: 100px;" src="">
+                            </div>
+                        </div>
+                        <p class="demoText"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md3 uploader-list">
+                <label class="layui-form-label">分享图片</label>
+                <input type="hidden" class="pic" name="share_img">
+                <div class="layui-input-block">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
+                                class="icon icon-upload3"></i>点击上传
+                        </button>
+                        <div class="layui-upload-list">
+                            <div class="file-iteme">
+                                <div class="handle" style="display: none;"><i class="layui-icon layui-icon-delete"></i></div>
+                                <img id="share_img" style="width: 100px;height: 100px;" src="">
+                            </div>
+                        </div>
+                        <p class="demoText"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label"> 免责说明 </label>
             <div class="layui-input-4">
-                <input type="text" name="address" ng-model="field.address" class="layui-input"  placeholder="详细地址" autocomplete="off">
+                <input type="text" name="instructions" ng-model="field.instructions" lay-verify="required" class="layui-input" autocomplete="off">
             </div>
         </div>
-        <div class="layui-form-mid layui-word-aux required">线上活动该项不需要填写</div>
-    </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 网址 </label>
-        <div class="layui-input-4">
-            <input type="text" name="url" ng-model="field.url" class="layui-input" autocomplete="off">
+
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label">是否显示</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==2" ng-value="2"
+                           title="否">
+                    <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==1" ng-value="1"
+                           title="是">
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label">是否推荐到首页</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==2" ng-value="2"
+                           title="否">
+                    <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==1" ng-value="1"
+                           title="是">
+                </div>
+            </div>
+
+
+            <div class="layui-inline layui-col-md3">
+                <label class="layui-form-label">举办方式</label>
+                <div class="layui-input-5">
+                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==2"
+                           ng-value="2" title="线下">
+                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==1"
+                           ng-value="1" title="线上">
+                </div>
+            </div>
         </div>
-    </div>
 
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 组织信息 </label>
-        <div class="layui-input-4">
-          <textarea name="organ_infor" placeholder="请输入组织信息" class="layui-textarea" maxlength="500">{$info_array['organ_infor']}</textarea>
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">是否显示</label>
-        <div class="layui-input-4">
-            <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==2" ng-value="2" title="否">
-            <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==1" ng-value="1" title="是">
-        </div>
-    </div>
-
-
-    <div class="layui-form-item">
-        <label class="layui-form-label"> 免责说明 </label>
-        <div class="layui-input-4">
-            <input type="text" name="instructions" ng-model="field.instructions" lay-verify="required" class="layui-input" autocomplete="off">
-        </div>
-    </div>
-
-
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">举办方式</label>
-        <div class="layui-input-4">
-            <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==2" ng-value="2" title="线下">
-            <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==1" ng-value="1" title="线上">
-        </div>
-    </div>
-
-    <div class="layui-form-item">
-        <label class="layui-form-label">是否推荐到首页</label>
-        <div class="layui-input-4">
-            <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==2" ng-value="2" title="否">
-            <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==1" ng-value="1" title="是">
-        </div>
-    </div>
 
     <div class="layui-form-item">
         <label class="layui-form-label">活动内容</label>
@@ -291,13 +317,6 @@
             <script id="charge" name="charge" type="text/plain"><?=$charge?></script>
         </div>
     </div>
-
-    <!-- <div class="layui-form-item">
-        <label class="layui-form-label"> 举办方 </label>
-        <div class="layui-input-4">
-            <input type="text" name="organizer" ng-model="field.organizer" lay-verify="required"  class="layui-input">
-        </div>
-    </div> -->
 
 
 

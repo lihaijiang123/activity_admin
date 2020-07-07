@@ -17,7 +17,7 @@ class Serve extends Common{
         // 城市内容
         $city = new City();
         $city_con_decode = $city->getCityList();
-        
+
         $country = Db::name('act_hot_country')->select();
 
         foreach ($city_con_decode as $key => $val) {
