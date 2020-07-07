@@ -628,25 +628,50 @@ class Index extends Common
     public function test()
     {
         $data = input();
-        $search_city_whereIn = (!empty($data['city']) && $data['city'] != '全国') ? $this->city->getOtherSameLevelCities($data['city']) : null;
+        $search_city_whereIn = null;
+
         $param = $this->createParam($data);
         $order = $this->createOrder($data);
+
+        if (!empty($data['city'])) {
+            if (!in_array($data['city'], ['全球', '国内', '国外'])) {
+                $search_city_whereIn = ['search_city', ['in', $this->city->getOtherSameLevelCities($data['city'])]];
+            } else {
+
+                switch ($data['city']) {
+                    case '全球':
+                        $addr = [[1, '=', 1]];
+                        break;
+                    default:
+                    case '国内':
+                        $addr = [['country', '=', 1]];
+                        break;
+                    case '国外':
+                        $addr = [['country', '=', 2]];
+                        break;
+                }
+                $search_city_whereIn = $addr;
+            }
+
+        }
+
         $onlineParam = array_merge($param, array(['hold_mode', '=', 1]));
+
         if (1 < $data['serve_type_id']) {
             // !0 1 当前城市,当前类型的所有线下
             $add_where = array(
-                ['search_city', ['in', $search_city_whereIn]],
                 ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"],
                 ['hold_mode', '=', 2],
             );
-            $where = array_merge($param, $add_where);
+            $where = array_merge($param, $add_where, $search_city_whereIn);
+
             $list = $this->serve->selectServes($data['type'], $where, $order);
         } elseif (1 == $data['serve_type_id']) {
             // 线上 1 所有的线上
             $list = $this->serve->selectServes($data['type'], $onlineParam, $order);
         } else {
             // 热门 | 全部 0 (所有线上类型 + 当前省的线下)
-            $search_where2 = !empty($search_city_whereIn) ? array_merge($param, array(['search_city', ['in', $search_city_whereIn]])) : null;
+            $search_where2 = !empty($search_city_whereIn) ? array_merge($param, $search_city_whereIn) : null;
             $list = $this->serve->selectServes($data['type'], $onlineParam, $order, $search_where2);
         }
         return json_msg(0, 'success', array(
