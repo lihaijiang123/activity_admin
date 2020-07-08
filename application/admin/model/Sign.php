@@ -12,14 +12,13 @@ class Sign extends Model
     // 主键
     protected $pk = 'id';
 
-    protected $autoWriteTimestamp='int';
-    protected $createTime="create_time";
 
     // 如果存在就更新  如果不存在就插入
     public function signUp($data)
     {
         $res = $this->where('uid', $data['uid'])->where('serve_id', $data['serve_id'])->find();
         if (empty($res)){
+            $data['create_time'] = time();
             $this->insert($data);
             return 0;
         } else {

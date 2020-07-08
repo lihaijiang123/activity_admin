@@ -797,3 +797,14 @@ function exportExcel($expTitle, $expCellName, $expTableData)
     $objWriter->save('php://output');
     exit;
 }
+
+
+
+
+function sortArrayByField($data, $field, $order = SORT_ASC)
+{
+    $fields = array_column($data, $field);
+    array_multisort($fields, $order, $data);
+
+    return $data;
+}

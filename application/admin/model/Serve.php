@@ -37,9 +37,26 @@ class Serve extends Model
         $data = $em
             ->group('t1.id')
             ->order($order)
-            ->paginate(8, true, ['page' => $page])
+            ->paginate(1000, true, ['page' => $page])
             ->getCollection()
             ->toArray();
+
+        $notEndArr = $endArr = [];
+        if (null == $order) {
+            for ($i=0; $i<count($data); $i++){
+                if($data[$i]['end_time'] > time()) {
+                    array_push($notEndArr, $data[$i]);
+                } else {
+                    array_push($endArr, $data[$i]);
+                }
+            }
+        }
+        $sortNotEndArr = sortArrayByField($notEndArr, 'begin_time', SORT_ASC);
+        $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
+
+        $data = array_merge($sortNotEndArr, $sortEndArr);
+        //array_slice($active_list, ($page - 1) * config('pageSize') , config('pageSize');
+
 
         $data = $this->formatTime($data, 'begin_time', $type);
         $data = $this->formatAddr($data);

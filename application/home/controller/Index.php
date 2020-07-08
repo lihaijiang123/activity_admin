@@ -633,6 +633,8 @@ class Index extends Common
         $param = $this->createParam($data);
         $order = $this->createOrder($data);
 
+
+
         if (!empty($data['city'])) {
             if (!in_array($data['city'], ['全球', '国内', '国外'])) {
                 $search_city_whereIn = [['search_city', ['in', $this->city->getOtherSameLevelCities($data['city'])]]];
@@ -684,6 +686,7 @@ class Index extends Common
 
     private function createOrder($data)
     {
+        $order = null;
         //['id'=>'desc','create_time'=>'desc']
         if ($data['type'] == 'list') {
             switch ($data['flag']) {
@@ -699,8 +702,6 @@ class Index extends Common
                 case 104:
                     $order['create_time'] = 'desc';
                     break;
-                default:
-                    $order['t1.begin_time'] = 'asc';
             }
         }
 
@@ -784,14 +785,16 @@ class Index extends Common
         if (!empty($data['industry_other'])) $data['industry'] = $data['industry_other'];
         unset($data['industry_other']);
 
-        // 报名 新增返回0  更新返回1
-        $res = $this->sign->signUp($data);
-
-        if (0 === $res) {
-            $this->info->insertOrUpdate($data);
+        // 个人信息来修改的 is null
+        if (0 != $data['serve_id']) {
+            // 报名 新增返回0  更新返回1
+            $res = $this->sign->signUp($data);
         }
 
-        return json_msg(0, '', $res);
+        $this->info->insertOrUpdate($data);
+
+        $msg = $data['serve_id'] == 0 ? '修改成功' : '报名成功';
+        return json_msg(0, $msg, $res);
     }
 
     // get info
