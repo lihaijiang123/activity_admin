@@ -748,6 +748,7 @@ function change_key( $arr ){
 function imgAddHost(array $data, $field)
 {
     if (empty($data)) return $data;
+    $data = json_decode(json_encode($data), true);
     if (count($data) == count($data, 1)) {
         $data[$field] = config('admin_path') . $data[$field];
     } else {

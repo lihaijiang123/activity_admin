@@ -37,7 +37,7 @@ class Serve extends Model
         $data = $em
             ->group('t1.id')
             ->order($order)
-            ->paginate(1000, true, ['page' => $page])
+            ->paginate(1000, false, ['page' => 1/**$page**/])
             ->getCollection()
             ->toArray();
 
@@ -55,12 +55,12 @@ class Serve extends Model
         $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
 
         $data = array_merge($sortNotEndArr, $sortEndArr);
-        //array_slice($active_list, ($page - 1) * config('pageSize') , config('pageSize');
+        $arr = array_slice($data, ($page - 1) * config('pageSize') , config('pageSize'));
 
 
-        $data = $this->formatTime($data, 'begin_time', $type);
-        $data = $this->formatAddr($data);
-        return imgAddHost($data, 'pic');
+        $arr = $this->formatTime($arr, 'begin_time', $type);
+        $arr = $this->formatAddr($arr);
+        return imgAddHost($arr, 'pic');
     }
 
     public function formatTime($data, $field, $type)

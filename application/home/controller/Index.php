@@ -844,9 +844,15 @@ class Index extends Common
         $data['country'] = Db::table('act_hot_country')->order('sort desc')->select();
         $data['city'] = $this->city->getCityListTree();
 
+        return json_msg(0, '', $data);
+    }
 
 
+    // 关注的主办方
+    public function myOrganize($userId)
+    {
 
+        $data = $this->organize->getFocusLists($userId);
         return json_msg(0, '', $data);
     }
 }
