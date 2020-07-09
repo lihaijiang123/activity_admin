@@ -12,9 +12,9 @@ class Serve extends Model
     protected $pk = 'id';
 
 
-    protected $autoWriteTimestamp='int';
+    protected $autoWriteTimestamp = 'int';
 //    protected $autoWriteTimestamp='true';//时间戳
-    protected $createTime="create_time";
+    protected $createTime = "create_time";
 
     public function __construct($data = [])
     {
@@ -23,7 +23,7 @@ class Serve extends Model
     }
 
 
-    public function selectServes($type, $search_where1, $order = [], $search_where2 = [])
+    public function selectServes($param, $search_where1, $order = [], $search_where2 = [])
     {
         $page = input('get.page') ? input('get.page') : 1;
         $em = $this
@@ -43,8 +43,14 @@ class Serve extends Model
 
         $notEndArr = $endArr = [];
         if (null == $order) {
-            for ($i=0; $i<count($data); $i++){
-                if($data[$i]['end_time'] > time()) {
+            for ($i = 0; $i < count($data); $i++) {
+
+                $res = $this->timeFilter($data[$i], $param['flag']);
+                if (!$res) {
+                    continue;
+                }
+
+                if ($data[$i]['end_time'] > time()) {
                     array_push($notEndArr, $data[$i]);
                 } else {
                     array_push($endArr, $data[$i]);
@@ -55,13 +61,43 @@ class Serve extends Model
         $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
 
         $data = array_merge($sortNotEndArr, $sortEndArr);
-        $arr = array_slice($data, ($page - 1) * config('pageSize') , config('pageSize'));
+        $arr = array_slice($data, ($page - 1) * config('pageSize'), config('pageSize'));
 
 
-        $arr = $this->formatTime($arr, 'begin_time', $type);
+        $arr = $this->formatTime($arr, 'begin_time', $param['type']);
         $arr = $this->formatAddr($arr);
         return imgAddHost($arr, 'pic');
     }
+
+
+    public function timeFilter($data, $flag)
+    {
+        switch ($flag) {
+            case 2://今天
+                list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], strtotime(date('Ymd')), strtotime(date('Ymd', strtotime("+1 day"))));
+                break;
+            case 3://明天
+                list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], strtotime(date('Ymd', strtotime("+1 day"))), strtotime(date('Ymd', strtotime("+2 day"))));
+                break;
+            case 4://本周
+                list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('Y')), mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 + 7, date('Y')));
+                break;
+            case 5://本月
+                list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], mktime(0, 0, 0, date('m'), 1, date('Y')), mktime(0, 0, 0, date('m'), date('t'), date('Y')));
+                break;
+            case 6://本年
+                list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], strtotime(date('Y-01-01 00:00:00')), strtotime(date('Y-01-01 00:00:00', strtotime("+1 year"))));
+                break;
+            case 7://明年
+                list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], strtotime(date('Y-01-01 00:00:00', strtotime("+1 year"))), strtotime(date('Y-01-01 00:00:00', strtotime("+100 year"))));
+                break;
+            default:
+                list($s1, $e1, $s2, $e2) = [null, null, null, null];
+                break;
+        }
+        return is_time_cross($s1, $e1, $s2, $e2);
+    }
+
 
     public function formatTime($data, $field, $type)
     {

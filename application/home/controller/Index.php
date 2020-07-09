@@ -257,7 +257,7 @@ class Index extends Common
     public function organizeList()
     {
         $organize_id = input('organize_id');
-        $list = $this->serve->selectServes('list', array(['organize_id', '=', $organize_id]));
+        $list = $this->serve->selectServes(['type' => 'list', 'flag' => 0], array(['organize_id', '=', $organize_id]));
         return json_msg(0, 'ok', $list);
     }
 
@@ -667,14 +667,14 @@ class Index extends Common
             );
             $where = array_merge($param, $add_where, $search_city_whereIn);
 
-            $list = $this->serve->selectServes($data['type'], $where, $order);
+            $list = $this->serve->selectServes($data, $data['flag'], $where, $order);
         } elseif (1 == $data['serve_type_id']) {
             // 线上 1 所有的线上
-            $list = $this->serve->selectServes($data['type'], $onlineParam, $order);
+            $list = $this->serve->selectServes($data, $onlineParam, $order);
         } else {
             // 热门 | 全部 0 (所有线上类型 + 当前省的线下)
             $search_where2 = !empty($search_city_whereIn) ? array_merge($param, $search_city_whereIn) : null;
-            $list = $this->serve->selectServes($data['type'], $onlineParam, $order, $search_where2);
+            $list = $this->serve->selectServes($data, $onlineParam, $order, $search_where2);
         }
         return json_msg(0, 'success', array(
             'active_types' => $this->serveType->getActiveTypes($data['type']),
@@ -732,24 +732,6 @@ class Index extends Common
                     case 1:
                     case 201:
                         break;
-                    case 2:
-                        $param[] = ['begin_time', 'between', strtotime(date('Ymd')) . ',' . strtotime(date('Ymd', strtotime("+1 day")))];
-                        break;
-                    case 3:
-                        $param[] = ['begin_time', 'between', strtotime(date('Ymd', strtotime("+1 day"))) . ',' . strtotime(date('Ymd', strtotime("+2 day")))];
-                        break;
-                    case 4:
-                        $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), date('d') - date('w') + 1, date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('d') - date('w') + 1 + 7, date('Y'))];
-                        break;
-                    case 5:
-                        $param[] = ['begin_time', 'between', mktime(0, 0, 0, date('m'), 1, date('Y')) . ',' . mktime(0, 0, 0, date('m'), date('t'), date('Y'))];
-                        break;
-                    case 6:
-                        $param[] = ['begin_time', 'between', strtotime(date('Y-01-01 00:00:00')) . ',' . strtotime(date('Y-01-01 00:00:00', strtotime("+1 year")))];
-                        break;
-                    case 7:
-                        $param[] = ['begin_time', '>', strtotime(date('Y-01-01 00:00:00', strtotime("+1 year")))];
-                        break;
                     case 8:
                         $param[] = ['end_time', '<', time()];
                         break;
@@ -759,7 +741,6 @@ class Index extends Common
                     case 203:
                         $param[] = ['price', '>', 0];
                         break;
-
                 }
             }
 
