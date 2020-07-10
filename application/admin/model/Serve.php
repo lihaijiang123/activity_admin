@@ -141,15 +141,15 @@ class Serve extends Model
     //
     public function sendMsg()
     {
-        $st = strtotime(date('Y/m/d',strtotime('-365 days')));
-        $et = strtotime(date('Y/m/d',strtotime('-1 days')));
+        $st = strtotime(date('Y/m/d',strtotime('+3 days')));
+        $et = strtotime(date('Y/m/d',strtotime('+4 days')));
 
         $list = $this
             ->field('s.id,s.title,s.begin_time,s.search_city,s.address,s.hold_mode,u.openid')
             ->where('begin_time', 'between', [$st, $et])
             ->alias('s')
-            ->join('act_attention aa', 's.id=aa.organize_id')
-            ->join('siging_users u', 'aa.userId=u.user_id')
+            ->join('act_sign as', 's.id=as.serve_id')
+            ->join('siging_users u', 'as.uid=u.user_id')
             ->select();
 
         $data = [];
