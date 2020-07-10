@@ -23,7 +23,9 @@
         "tp5er/tp5-databackup": "^1.0",
         "sujun/oauthsdk": "v1.0.1",
       "ext-mbstring": "*",
-        "phpoffice/phpexcel": "^1.8"
+        "phpoffice/phpexcel": "^1.8",
+      "ext-json": "*",
+        "ext-curl": "*"
     },
     "autoload": {
         "psr-4": {

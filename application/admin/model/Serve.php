@@ -137,4 +137,31 @@ class Serve extends Model
         }
         return $data;
     }
+
+    //
+    public function sendMsg()
+    {
+        $st = strtotime(date('Y/m/d',strtotime('-365 days')));
+        $et = strtotime(date('Y/m/d',strtotime('-1 days')));
+
+        $list = $this
+            ->field('s.id,s.title,s.begin_time,s.search_city,s.address,s.hold_mode,u.openid')
+            ->where('begin_time', 'between', [$st, $et])
+            ->alias('s')
+            ->join('act_attention aa', 's.id=aa.organize_id')
+            ->join('siging_users u', 'aa.userId=u.user_id')
+            ->select();
+
+        $data = [];
+        foreach ($list as $k => $v) {
+            $data[$k]['id'] = $v['id'];
+            $data[$k]['title'] = mb_strlen($v['title']) > 20 ? mb_substr($v['title'], 0, 17) . '...' : $v['title'];
+            $data[$k]['open_id'] = $v['openid'];
+            $data[$k]['begin_time'] = date('Y年m月d日 H:i', $v['begin_time']);
+            $data[$k]['addr'] = ($v['hold_mode'] == 1) ? '线上活动' : ($v['search_city'].$v['address']);
+            $data[$k]['tip'] = '本次活动有干货分享，可带好笔记本做记录~';
+        }
+
+        return $data;
+    }
 }

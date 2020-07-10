@@ -832,8 +832,28 @@ class Index extends Common
     // 关注的主办方
     public function myOrganize($userId)
     {
-
         $data = $this->organize->getFocusLists($userId);
         return json_msg(0, '', $data);
+    }
+
+    // 发送微信服务通知
+    public function send()
+    {
+        $data = $this->serve->sendMsg();
+
+        for ($i=0;$i<count($data);$i++) {
+            $res[] = $this->sendMsg($data[$i]);
+        }
+
+        dump($res);
+        exit;
+    }
+
+    private function sendMsg($data)
+    {
+        $accessToken = getAccessToken();
+        $url = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token='.$accessToken['data'];
+        $field = '{"touser":"' . $data['open_id'] . '","template_id":"bQOHAyqzvoId0mF37tIz7bvKcUZdIZ8ux4LfwIo8dNs","miniprogram_state":"developer","lang":"zh_CN","page":"/pages/content/index?id=' . $data['id'] . '","data":{"thing2":{"value":"' . $data['title'] . '"},"time3":{"value":"' . $data['begin_time'] . '"},"thing4":{"value":"' . $data['addr'] . '"},"thing5":{"value":"' . $data['tip'] . '"}}}';
+        return curl_post($url, $field, 'json');
     }
 }

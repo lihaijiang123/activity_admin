@@ -44,8 +44,7 @@ return [
     '/feedback/[:userId]'=>'home/index/feeBack',//建议反馈
     '/hotCountry/[:userId]'=>'home/index/hotCountry',//热门国家
     '/myOrganize/[:userId]'=>'home/index/myOrganize',//关注的主办方
-    //
-
+    '/send/ty87ow5vbtty40q89yna8907nap89wnl/[:userId]'=>'home/index/send',//服务通知
 
 
     // 'about/:catId'=>'home/about/index',
