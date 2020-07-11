@@ -13,7 +13,7 @@ return [
     // 数据库类型
     'type'            => 'mysql',
     // 服务器地址
-    'hostname'        => '127.0.0.1',
+    'hostname'        => 'mydb',
     // 'hostname'        => '39.98.227.173',
     // 数据库名
     'database'        => 'clothing',
@@ -21,7 +21,7 @@ return [
     // 'username'        => 'root',
     'username'        => 'root',
     // 密码
-    'password'        => '',
+    'password'        => '123456',
     // 'password'        => '',
     // 端口
     'hostport'        => '3306',

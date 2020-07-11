@@ -45,6 +45,7 @@ return [
     '/hotCountry/[:userId]'=>'home/index/hotCountry',//热门国家
     '/myOrganize/[:userId]'=>'home/index/myOrganize',//关注的主办方
     '/send/ty87ow5vbtty40q89yna8907nap89wnl/[:userId]'=>'home/index/send',//服务通知
+    '/cancel/[:userId]'=>'home/index/cancel',//取消报名
 
 
     // 'about/:catId'=>'home/about/index',

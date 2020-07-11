@@ -116,6 +116,15 @@
                 </div>
                 <div class="layui-form-mid layui-word-aux required">*</div>
             </div>
+
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">报名截止时间</label>
+                <div class="layui-input-7">
+                    <input type="text" id="close_time" lay-verify="required" autocomplete="off" name="close_time"
+                           value="{{d.close_time}}" placeholder="" class="layui-input">
+                </div>
+                <div class="layui-form-mid layui-word-aux required">*</div>
+            </div>
         </div>
 
         <div class="layui-form-item">
@@ -473,6 +482,7 @@
 useLayDateMultiple('begin_time');
 
 useLayDateMultiple('end_time');
+useLayDateMultiple('close_time');
 
     function useLayDateMultiple(cls) {
         layui.use('laydate', function() {

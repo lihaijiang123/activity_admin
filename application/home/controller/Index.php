@@ -221,6 +221,7 @@ class Index extends Common
             $info['cang'] = false;
         }
 
+        // 想参加
         $is_join = Db::table('act_join')->where('userId', '=', $data['userId'])->where('serve_id', '=', $data['activity'])->find();
         if (!empty($is_join['id'])) {
             $info['join'] = true;
@@ -228,7 +229,19 @@ class Index extends Common
             $info['join'] = false;
         }
 
-        $info['sign_num'] = Db::table('act_sign')->where('serve_id', '=', $data['activity'])->count();
+        // 报名
+        $is_join = Db::table('act_join')->where('userId', '=', $data['userId'])->where('serve_id', '=', $data['activity'])->find();
+        if (!empty($is_join['id'])) {
+            $info['join'] = true;
+        } else {
+            $info['join'] = false;
+        }
+
+        // 是否报名
+        $info['isSign'] = $this->sign->isSign(array(['uid', '=', $data['userId']], ['serve_id', '=', $data['activity']]));
+        // $info['sign_num'] = Db::table('act_sign')->where('serve_id', '=', $data['activity'])->count();
+        // 报名结束了吗
+        $info['isClose'] = $info['close_time'] > time() ? false : true;
 
         $serveTypeArr = Db::table('act_serve_type')->where('id', 'in', $info['serve_type_id'])->select();
         $info['serve_type'] = array_column($serveTypeArr, 'title');
@@ -302,6 +315,9 @@ class Index extends Common
             //我的想参加
             case 'join_list':
                 $this->join_list($data);
+                break;
+            case 'sign_list':
+                $this->sign_list($data);
                 break;
             default:
                 # code...
@@ -479,6 +495,35 @@ class Index extends Common
             ->Join('act_serve sever', 'sever.id=join.serve_id')
             ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
             ->order('join.create_time desc')
+            ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
+            ->toArray();
+
+
+        if (!empty($list)) {
+            foreach ($list['data'] as $key => &$val) {
+                $val['pic'] = config('admin_path') . $val['pic'];
+                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
+                $val['end_time'] = date('m-d H:i', $val['end_time']);
+                $val['serve_category_id'] = $this->active_categorys[$val['serve_category_id']]['title'];
+            }
+        }
+
+        return json_msg(0, '成功', $list);
+    }
+
+    // 报名列表
+    public function sign_list($data)
+    {
+
+        $page = empty($data['page']) ? 1 : $data['page'];
+
+        $list = Db::name('act_sign')
+            ->alias('sign')
+            ->distinct(true)
+            ->where('sign.uid', '=', $data['userId'])
+            ->Join('act_serve sever', 'sever.id=sign.serve_id')
+            ->field('sever.id, sever.title, sever.pic, sever.begin_time, sever.end_time, sever.see_num, serve_category_id, sever.cang_num, sever.price, sever.hold_mode, search_serve_type as serve_type, address, search_city as city')
+            ->order('sign.create_time desc')
             ->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
             ->toArray();
 
@@ -755,7 +800,7 @@ class Index extends Common
         return json_msg(0, '', $data);
     }
 
-
+    // info
     public function info()
     {
         $fileds = input();
@@ -778,11 +823,18 @@ class Index extends Common
         return json_msg(0, $msg, $res);
     }
 
+    // 取消报名
+    public function cancel($userId, $serve_id)
+    {
+        $res = $this->sign->cancel($userId, $serve_id);
+        return json_msg(0, '', $res);
+    }
+
     // get info
     public function getInfo($userId, $serve_id)
     {
         // 行业
-        $industry = Db::table('act_industry')->select();
+        $industry = Db::table('act_industry')->order('sort desc')->select();
         $data['industry'] = array_column($industry, 'name');
         array_push($data['industry'], '其他');
 

@@ -37,4 +37,16 @@ class Sign extends Model
     {
         return $this->where($data)->find();
     }
+
+
+    public function IsSign($where)
+    {
+        $count = $this->where($where)->count();
+        return $count > 0;
+    }
+
+    public function cancel($uid, $serve_id)
+    {
+        return $this->where('uid', $uid)->where('serve_id', $serve_id)->delete();
+    }
 }

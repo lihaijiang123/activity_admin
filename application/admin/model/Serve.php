@@ -41,6 +41,7 @@ class Serve extends Model
             ->getCollection()
             ->toArray();
 
+
         $notEndArr = $endArr = [];
         if (null == $order) {
             for ($i = 0; $i < count($data); $i++) {
@@ -56,11 +57,12 @@ class Serve extends Model
                     array_push($endArr, $data[$i]);
                 }
             }
-        }
-        $sortNotEndArr = sortArrayByField($notEndArr, 'begin_time', SORT_ASC);
-        $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
 
-        $data = array_merge($sortNotEndArr, $sortEndArr);
+            $sortNotEndArr = sortArrayByField($notEndArr, 'begin_time', SORT_ASC);
+            $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
+            $data = array_merge($sortNotEndArr, $sortEndArr);
+        }
+
         $arr = array_slice($data, ($page - 1) * config('pageSize'), config('pageSize'));
 
 
@@ -108,6 +110,7 @@ class Serve extends Model
             }
         } elseif ($type == 'list') {
             foreach ($data as &$v) {
+                $v['loading'] = $v['end_time'] > time() ? true : false;
                 if ($v['end_time'] - $v['begin_time'] <= 24 * 60 * 60) {
                     $v[$field] = date('Y.m.d H:i', $v['end_time']);
                 } elseif (date('Y', $v['begin_time']) != date('Y', $v['end_time'])) {
@@ -141,8 +144,8 @@ class Serve extends Model
     //
     public function sendMsg()
     {
-        $st = strtotime(date('Y/m/d',strtotime('+3 days')));
-        $et = strtotime(date('Y/m/d',strtotime('+4 days')));
+        $st = strtotime(date('Y/m/d',strtotime('+1 days')));
+        $et = strtotime(date('Y/m/d',strtotime('+2 days')));
 
         $list = $this
             ->field('s.id,s.title,s.begin_time,s.search_city,s.address,s.hold_mode,u.openid')
