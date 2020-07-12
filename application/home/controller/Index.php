@@ -763,8 +763,8 @@ class Index extends Common
 
         if ($data['type'] == 'index') {
             $param[] = ['is_hot', '=', 1];
-            //$param[] = ['end_time', '>', time()];
-            $param[] = ['begin_time', '<', time()];
+            $param[] = ['end_time', '>', time()];
+            //$param[] = ['begin_time', '<', time()];
         }
 
         if ($data['type'] == 'list') {
