@@ -258,7 +258,7 @@ class Index extends Common
 
         $organize = Db::table('act_organize')->where('id', '=', $info['organize_id'])->find();
         $info['organize'] = imgAddHost($organize, 'pic');
-        $info['organize']['fans'] = Db::table('act_organize')->join('act_attention', 'act_organize.id = act_attention.organize_id')->where('act_attention.userId', '=', $data['userId'])->count();
+        $info['organize']['fans'] = Db::table('act_organize')->join('act_attention', 'act_organize.id = act_attention.organize_id')->where('act_attention.organize_id', '=', $data['organize_id'])->count();
         $info['organize']['activity_num'] = Db::table('act_serve')->where('organize_id', '=', $info['organize_id'])->count();
 
         return json_msg(0, '成功', $info);
@@ -280,7 +280,7 @@ class Index extends Common
         $info = $this->organize->where('id', $data['organize_id'])->find()->toArray();
         $is_attention = Db::table('act_attention')->where('userId', '=', $data['userId'])->where('organize_id', '=', $data['organize_id'])->count();
         $info['attention'] = !empty($is_attention);
-        $info['fans'] = Db::table('act_organize')->join('act_attention', 'act_organize.id = act_attention.organize_id')->where('act_attention.userId', '=', $data['userId'])->count();
+        $info['fans'] = Db::table('act_organize')->join('act_attention', 'act_organize.id = act_attention.organize_id')->where('act_attention.organize_id', '=', $data['organize_id'])->count();
         $info['activity_num'] = Db::table('act_serve')->where('organize_id', '=', $data['organize_id'])->count();
 
         $info = imgAddHost($info, 'pic');
@@ -763,7 +763,7 @@ class Index extends Common
 
         if ($data['type'] == 'index') {
             $param[] = ['is_hot', '=', 1];
-            $param[] = ['end_time', '>', time()];
+            //$param[] = ['end_time', '>', time()];
             $param[] = ['begin_time', '<', time()];
         }
 
