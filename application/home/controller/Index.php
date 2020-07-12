@@ -258,7 +258,7 @@ class Index extends Common
 
         $organize = Db::table('act_organize')->where('id', '=', $info['organize_id'])->find();
         $info['organize'] = imgAddHost($organize, 'pic');
-        $info['organize']['fans'] = Db::table('act_attention')->where('organize_id', '=', $data['organize_id'])->count();
+        $info['organize']['fans'] = Db::table('act_attention')->where('organize_id', '=', $info['organize_id'])->count();
         $info['organize']['activity_num'] = Db::table('act_serve')->where('organize_id', '=', $info['organize_id'])->count();
 
         return json_msg(0, '成功', $info);
