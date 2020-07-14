@@ -43,7 +43,7 @@ class Serve extends Model
 
 
         $notEndArr = $endArr = [];
-        if (null == $order) {
+        //if (null == $order) {
             for ($i = 0; $i < count($data); $i++) {
 
                 $res = $this->timeFilter($data[$i], $param['flag']);
@@ -61,7 +61,7 @@ class Serve extends Model
             $sortNotEndArr = sortArrayByField($notEndArr, 'begin_time', SORT_ASC);
             $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
             $data = array_merge($sortNotEndArr, $sortEndArr);
-        }
+        //}
 
         $arr = array_slice($data, ($page - 1) * config('pageSize'), config('pageSize'));
 

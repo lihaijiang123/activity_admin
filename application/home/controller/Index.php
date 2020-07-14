@@ -712,9 +712,10 @@ class Index extends Common
             );
             $where = array_merge($param, $add_where, $search_city_whereIn);
 
-            $list = $this->serve->selectServes($data, $data['flag'], $where, $order);
+            $list = $this->serve->selectServes($data, $where, $order);
         } elseif (1 == $data['serve_type_id']) {
             // 线上 1 所有的线上
+
             $list = $this->serve->selectServes($data, $onlineParam, $order);
         } else {
             // 热门 | 全部 0 (所有线上类型 + 当前省的线下)
