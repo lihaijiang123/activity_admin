@@ -106,8 +106,10 @@
 
 <!-- 需要 添加的方法名称 按钮的的title -->
 <script type="text/html" id="topBtn">
-	<!-- <a href="{:url('add')}" class="layui-btn  layui-btn-sm" >添加</a> -->
-<a class="layui-btn  layui-btn-sm" id="add_btn">添加</a>
+	<!-- <a href="{:url('add')}" class="layui-btn  layui-btn-sm" >添加123</a> -->
+	<a class="layui-btn  layui-btn-sm" id="add_btn">添加</a>
+	<a class="layui-btn  layui-btn-sm" id="del_btn">批量删除</a>
+
 </script>
 <!-- 需要 添加的方法名称 按钮的的title -->
 
@@ -169,6 +171,7 @@
 			page: { curr: pageId },
 			cols: [
 				[
+					{checkbox:true,fixed: true},
 
 					{
 						field: 'id',
@@ -378,11 +381,12 @@
 					}, function (res) { //主键
 						layer.close(loading);
 						if (res.code === 1) {
+							obj.del();
 							layer.msg(res.msg, {
 								time: 1000,
 								icon: 1
 							});
-							tableIn.reload();
+							//tableIn.reload();
 						} else {
 							layer.msg('操作失败！', {
 								time: 1000,
@@ -394,6 +398,45 @@
 				});
 			}
 		});
+
+		//批量删除
+		$("#del_btn").on('click',function(){
+			//获取选中状态            
+			var checkStatus = table.checkStatus('user');
+
+			//获取选中数量
+			var selectCount = checkStatus.data.length;
+			if(selectCount == 0){
+				layer.msg('批量删除至少选中一项数据',function(){});
+				return false;
+			}
+			layer.confirm('真的要删除选中的项吗？',function(index){
+				layer.close(index);
+				index = layer.load(1, {shade: [0.1,'#fff']});
+
+				var arr=[];
+				for(var i=0; i<selectCount; i++){
+					arr[i] =  checkStatus.data[i].id;
+				}
+
+				$.post("{:url('Dels')}", {arr: arr}, function (res) {
+					layer.close(index);
+					if (res.code === 1) {
+						layer.msg(res.msg, {
+							time: 1000,
+							icon: 1
+						});
+						tableIn.reload();
+					} else {
+						layer.msg('操作失败！', {
+							time: 1000,
+							icon: 2
+						});
+					}
+				})
+
+			});
+		});         
 
 
 		form.on('switch(hold_mode)', function (obj) {

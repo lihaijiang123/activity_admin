@@ -62,7 +62,7 @@
             totalRow: true,
             page: true,
             cols: [[
-                {checkbox:true,fixed: true},
+                //{checkbox:true,fixed: true},
                 {field: 'userName', title: '用户名', width: 100},
                 {field: 'pic', align: 'center',title: '头像', width: 120,toolbar: '#pic'},
                 {field: 'status', align: 'center',title: '状态', width: 120,toolbar: '#status'},
@@ -103,8 +103,9 @@
                     $.post("{:url('Del')}",{id:data.user_id},function(res){       //主键
                         layer.close(loading);
                         if(res.code===1){
+                            obj.del();
                             layer.msg(res.msg,{time:1000,icon:1});
-                            tableIn.reload();
+                            //tableIn.reload();
                         }else{
                             layer.msg('操作失败！',{time:1000,icon:2});
                         }

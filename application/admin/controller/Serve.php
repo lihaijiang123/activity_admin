@@ -249,6 +249,20 @@ class Serve extends Common
         }
     }
 
+    /**
+     * 批量删除
+     */
+    public function Dels()
+    {
+        $arr = input('post.arr');
+        $res = ServeModel::destroy($arr);
+        if ($res) {
+            return $result = ['code' => 1, 'msg' => '删除成功!'];
+        } else {
+            return $result = ['code' => 0, 'msg' => '删除失败!'];
+        }
+    }
+
 
     /**
      * 添加
