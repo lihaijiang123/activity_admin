@@ -78,6 +78,16 @@ class Serve extends Common
             if (!empty($city)) {
                 $where[] = ['search_city', 'like', "%" . trim($city) . "%"];      //搜索字段
             }
+
+//            dump(input('post.hot'));
+//            dump(input('post.status'));
+
+            if (!empty(input('post.organize'))) $where[] = ['organize_id', '=', input('post.organize')];
+            if (!empty(input('post.serve_category'))) $where[] = ['serve_category_id', '=', input('post.serve_category')];
+            if (in_array(input('post.hot'), ['0', '1']) ) $where[] = ['is_hot', '=', input('post.hot')];
+            if (in_array(input('post.status'), ['0', '1'])) $where[] = ['status', '=', input('post.status')];
+
+
             $model = new ServeModel();
             $list = $model->where($where)->order('id desc')->paginate(array('list_rows' => $pageSize, 'page' => $page))->toArray();
             foreach ($list['data'] as $key => &$value) {

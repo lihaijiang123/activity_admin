@@ -13,6 +13,16 @@
 	</fieldset>
 
 
+	<!-- 不需要 -->
+	<div class="demoTable">
+		<div class="layui-inline">
+			<input class="layui-input" name="key" id="key" autocomplete="off" placeholder="{:lang('pleaseEnter')}关键字">
+		</div>
+		<button class="layui-btn" id="search" data-type="reload">搜索</button>
+		<a href="{:url('index')}" class="layui-btn">显示全部</a>
+	</div>
+	<!-- 不需要 -->
+
 	<table class="layui-table" id="list" lay-filter="list"></table>
 
 </div>
@@ -100,22 +110,20 @@
 						field: 'name',
 						title: '名称',
 					},
-
-					{
-						field: 'pic',
-						title: 'LOGO',
-						toolbar: '#pic'
-					},
-
-					{
-						field: 'fans',
-						title: '粉丝数量',
-					},
+					// {
+					// 	field: 'pic',
+					// 	title: 'LOGO',
+					// 	toolbar: '#pic'
+					// },
 
 					{
 						field: 'attention',
-						align: 'center',
 						title: '关注数量',
+					},
+					{
+						field: 'activity',
+						align: 'center',
+						title: '活动数量',
 					}
 				]
 			],

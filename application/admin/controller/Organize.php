@@ -5,6 +5,7 @@ namespace app\admin\controller;
 
 
 use app\admin\model\Organize as Model;
+use think\Db;
 
 class Organize extends Common
 {
@@ -24,64 +25,19 @@ class Organize extends Common
             }
 
             $pageSize = input('limit') ? input('limit') : config('pageSize');
-            $serve_type_id = input('post.serve_type_id');
-            $city = input('post.city');
             $where = array();
             if (!empty($key)) {
-                $where[] = ['title', 'like', "%" . trim($key) . "%"];      //搜索字段
+                $where[] = ['name', 'like', "%" . trim($key) . "%"];      //搜索字段
             }
-            if (!empty($serve_type_id)) {
-                $where[] = ['search_serve_type', 'like', "%" . trim($serve_type_id) . "%"];      //搜索字段
-            }
-            if (!empty($city)) {
-                $where[] = ['search_city', 'like', "%" . trim($city) . "%"];      //搜索字段
-            }
+
             $model = new Model();
             $list = $model->where($where)->order('id desc')->paginate(array('list_rows' => $pageSize, 'page' => $page))->toArray();
 
             foreach ($list['data'] as $key => &$value) {
-                // 列表页 循环处理条件 都放在这里
-                //index_for_list_data
-
-                // if(empty($value["end_time"])){
-                //   $value["end_time"] = '';
-                // }else{
-                //   $value["end_time"] = date('Y-m-d H:i',$value["end_time"]);
-                // }
-
-
-                // if(empty($value["begin_time"])){
-                //   $value["begin_time"] = '';
-                // }else{
-                //   $value["begin_time"] = date('Y-m-d H:i',$value["begin_time"]);
-                // }
-
-                if (!empty($value['begin_time']) && !empty($value['end_time'])) {
-                    $value['real_time'] = date('Y-m-d', $value['begin_time']) . ' 至 ' . date('m-d', $value['end_time']);
-                }
-
-                if (!empty($value['serve_type_id'])) {
-                    $serve_type_id_arr = explode(',', $value['serve_type_id']);
-                    $str = '';
-                    foreach ($serve_type_id_arr as $key => $val) {
-                        $str .= $this->serve_type_id_array[$val]['title'] . ',';
-                    }
-                    $value['serve_type_id'] = rtrim($str, ',');
-                    // $tutor_list['data']
-                    // var_dump($value['serve_type_id']);die;
-                }
-
-                if (!empty($value['serve_category_id'])) {
-                    $value['serve_category_id'] = $this->serve_category_id_array[$value['serve_category_id']]['title'];
-                }
-
-
-                // $list['serve_type_id_array'] = [];
-                // $value['serve_type_id'] = $list['serve_type_id_array'][$value['serve_type_id']];
+                $value['attention'] = Db::table('act_attention')->where('organize_id', '=', $value['id'])->count();
+                $value['activity'] = Db::table('act_serve')->where('organize_id', '=', $value['id'])->count();
 
                 $value['page'] = $page;
-
-
             }
 
             // 下拉单选处理select_index_radio
@@ -108,6 +64,9 @@ class Organize extends Common
             // 列表页 循环处理条件 都放在这里add_for_list_data
 
             $model = new Model($data);
+
+            $count = $model->where('name', $data['name'])->count();
+            if ($count > 0) return ['msg' => '该主办方已添加', 'code' => 0];
             // 过滤post数组中的非数据表字段数据
             if ($model->allowField(true)->save()) {
                 $result['msg'] = '添加成功!';
