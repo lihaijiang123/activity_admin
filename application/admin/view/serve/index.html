@@ -348,7 +348,7 @@
     	})
 
 		$(document).on('click','#edit_btn',function() {
-        	var id = $(this).parents('tr').children().eq(0).text();
+        	var id = $(this).data('id');
 			var page = $(this).attr('data-page');
 			// console.log('./edit.html?id=' + id + '&page=' + page);
 

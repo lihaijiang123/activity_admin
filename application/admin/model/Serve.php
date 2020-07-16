@@ -44,27 +44,29 @@ class Serve extends Model
 
         $notEndArr = $endArr = [];
         //if (null == $order) {
-            for ($i = 0; $i < count($data); $i++) {
-
+        for ($i = 0; $i < count($data); $i++) {
+            if (null == $order) {
                 $res = $this->timeFilter($data[$i], $param['flag']);
                 if (!$res) {
                     continue;
                 }
-
-                if ($data[$i]['end_time'] > time()) {
-                    array_push($notEndArr, $data[$i]);
-                } else {
-                    array_push($endArr, $data[$i]);
-                }
             }
 
-            $sortNotEndArr = sortArrayByField($notEndArr, 'begin_time', SORT_ASC);
-            $sortEndArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
-            $data = array_merge($sortNotEndArr, $sortEndArr);
-        //}
+            if ($data[$i]['end_time'] > time()) {
+                array_push($notEndArr, $data[$i]);
+            } else {
+                array_push($endArr, $data[$i]);
+            }
+        }
 
+
+        if (null == $order) {
+            $notEndArr = sortArrayByField($notEndArr, 'begin_time', SORT_ASC);
+            $endArr = sortArrayByField($endArr, 'begin_time', SORT_DESC);
+        }
+
+        $data = array_merge($notEndArr, $endArr);
         $arr = array_slice($data, ($page - 1) * config('pageSize'), config('pageSize'));
-
 
         $arr = $this->formatTime($arr, 'begin_time', $param['type']);
         $arr = $this->formatAddr($arr);
@@ -94,10 +96,14 @@ class Serve extends Model
                 list($s1, $e1, $s2, $e2) = array($data['begin_time'], $data['end_time'], strtotime(date('Y-01-01 00:00:00', strtotime("+1 year"))), strtotime(date('Y-01-01 00:00:00', strtotime("+100 year"))));
                 break;
             default:
-                list($s1, $e1, $s2, $e2) = [null, null, null, null];
+                list($s1, $e1, $s2, $e2) = [false, false, false, false];
                 break;
         }
-        return is_time_cross($s1, $e1, $s2, $e2);
+        if ($s1) {
+            return is_time_cross($s1, $e1, $s2, $e2);
+        } else {
+            return true;
+        }
     }
 
 
