@@ -120,7 +120,7 @@ var editObj=null,ptable=null,treeGrid=null,tableId='treeTable',layer=null;
            $.post('{:url("ruleOrder")}',{id:id,sort:sort},function(res){
                 if(res.code==1){
                     layer.msg(res.msg,{time:1000,icon:1},function(){
-                        location.href = res.url;
+                        // location.href = res.url;
                     });
                 }else{
                     layer.msg(res.msg,{time:1000,icon:2});

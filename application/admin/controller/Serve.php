@@ -350,8 +350,6 @@ class Serve extends Common
     {
         $where = [];
         if (!empty($id)) $where = ['serve_id' => $id];
-        dump($where);
-        exit;
         $data = Db::table('act_serve s1')->field('s1.title,s2.name,s2.phone,s2.email,s2.industry,s2.position,s2.note,s2.create_time')->join('act_sign s2', 's1.id = s2.serve_id')
             ->where($where)->select();
 

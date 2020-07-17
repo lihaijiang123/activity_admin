@@ -12,7 +12,7 @@ class Index extends Common
         // 获取缓存数据
         $authRule = cache('authRule');
         if(!$authRule){
-            $authRule = db('auth_rule')->where('menustatus=1')->order('sort')->select();
+            $authRule = db('auth_rule')->where('menustatus=1')->order('sort desc')->select();
             cache('authRule', $authRule, 3600);
        }
         //声明数组

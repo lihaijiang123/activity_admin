@@ -186,7 +186,7 @@ class Index extends Common
             }
         }
 
-        array_unshift($active_types, ['id' => 0, 'title' => '全部']);
+        array_unshift($active_types, ['id' => 0, 'title' => '全部'], ['id' => 1, 'title' => '线上']);
         $return['active_types'] = $active_types;
         $return['banners'] = $banners;
         $return['active_list'] = $active_list;
