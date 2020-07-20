@@ -418,7 +418,6 @@ class Index extends Common
         $order = $this->createOrder($data);
 
 
-
         if (!empty($data['city'])) {
             if (!in_array($data['city'], ['全球', '国内', '国外'])) {
                 $search_city_whereIn = [['search_city', ['in', $this->city->getOtherSameLevelCities($data['city'])]]];
@@ -512,6 +511,18 @@ class Index extends Common
                 $param[] = ['t1.serve_type_id', 'like', '%' . $arr[1] . '%'];
             } elseif (preg_match("/category-(\d+)/", $data['flag'], $arr)) {
                 $param[] = ['t1.serve_category_id', 'like', $arr[1]];
+            } elseif (preg_match("/way-(\d+)/", $data['flag'], $arr)) {
+                switch ($arr[1]) {
+                    case 1://全部
+                    default:
+                        break;
+                    case 2://线上
+                        $param[] = ['hold_mode', 'in', '1,3'];
+                        break;
+                    case 3://线下
+                        $param[] = ['hold_mode', 'in', '2,3'];
+                        break;
+                }
             } else {
                 switch ($data['flag']) {
                     case 1:
@@ -633,7 +644,7 @@ class Index extends Common
     {
         $data = $this->serve->sendMsg();
 
-        for ($i=0;$i<count($data);$i++) {
+        for ($i = 0; $i < count($data); $i++) {
             $res[] = $this->sendMsg($data[$i]);
         }
 
@@ -644,7 +655,7 @@ class Index extends Common
     private function sendMsg($data)
     {
         $accessToken = getAccessToken();
-        $url = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token='.$accessToken['data'];
+        $url = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token=' . $accessToken['data'];
         $field = '{"touser":"' . $data['open_id'] . '","template_id":"bQOHAyqzvoId0mF37tIz7bvKcUZdIZ8ux4LfwIo8dNs","miniprogram_state":"developer","lang":"zh_CN","page":"/pages/content/index?id=' . $data['id'] . '","data":{"thing2":{"value":"' . $data['title'] . '"},"time3":{"value":"' . $data['begin_time'] . '"},"thing4":{"value":"' . $data['addr'] . '"},"thing5":{"value":"' . $data['tip'] . '"}}}';
         return curl_post($url, $field, 'json');
     }
