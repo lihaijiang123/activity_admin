@@ -252,29 +252,42 @@
         </div>
 
         <div class="layui-form-item">
-            <div class="layui-inline layui-col-md3">
+            <div class="layui-inline layui-col-md5">
 
                 <label class="layui-form-label">是否显示</label>
-                <div class="layui-input-5">
+                <div class="layui-input-6">
                     <input type="radio" name="status" ng-value="2" title="否">
                     <input type="radio" name="status" checked ng-value="1" title="是">
                 </div>
             </div>
 
-            <div class="layui-inline layui-col-md3">
-                <label class="layui-form-label">是否推荐到首页</label>
-                <div class="layui-input-5">
+            <div class="layui-inline layui-col-md5">
+
+                <label class="layui-form-label">开启报名</label>
+                <div class="layui-input-6">
+                    <input type="radio" name="open" checked ng-value="0" title="否">
+                    <input type="radio" name="open" ng-value="1" title="是">
+                </div>
+            </div>
+
+        </div>
+        <div class="layui-form-item">
+
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">推荐首页</label>
+                <div class="layui-input-6">
                     <input type="radio" name="is_hot" checked ng-value="2" title="否">
                     <input type="radio" name="is_hot" ng-value="1" title="是">
                 </div>
             </div>
 
-            <div class="layui-inline layui-col-md3">
+            <div class="layui-inline layui-col-md5">
 
                 <label class="layui-form-label">举办方式</label>
-                <div class="layui-input-5">
+                <div class="layui-input-6">
                     <input type="radio" name="hold_mode" checked ng-value="2" title="线下">
                     <input type="radio" name="hold_mode" ng-value="1" title="线上">
+                    <input type="radio" name="hold_mode" ng-value="3" title="线上+线下">
                 </div>
             </div>
         </div>

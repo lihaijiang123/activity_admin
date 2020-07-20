@@ -40,6 +40,8 @@ class Index extends Common
 
     /* @var Sign */
     private $sign;
+    private $city_arr;
+    private $active_categorys;
 
     public function initialize()
     {
@@ -74,132 +76,10 @@ class Index extends Common
     }
 
     /**
-     * @Author   JFY
-     * @DateTime 2020-05-11
-     * @Describe [describe]
-     * @Purpose  [purpose]
-     * @param    [userId 用户id 必填]
-     * @param    [page 页码 选填]
-     * @param    [city 城市 选填]
-     * @param    [serve_type_id 活动类型id 选填]
-     * @return   [type]     [description]
-     */
-    public function index()
-    {
-        $data = input();
-        $page = empty($data['page']) ? 1 : $data['page'];
-
-        // 搜索条件
-        $search_where = [];
-        // 返回值
-        $return = [];
-
-        // 活动类型
-        $active_types = Db::name('act_serve_type')->field('id,title')->order('sort desc')->where('status', '=', 1)->select();
-
-        // banner
-        $banners = Db::name('act_banner')->field('id,title,img,url')->order('sort desc')->where('status', '=', 1)->select();
-        if (!empty($banners)) {
-            foreach ($banners as $banner_key => &$banner_val) {
-                $banner_val['img'] = config('admin_path') . $banner_val['img'];
-            }
-        }
-        // 热门活动
-        if ((!empty($data['city']) && $data['city'] != '全国') || $data['serve_type_id'] != 1) {
-            /*
-                去寻找当前城市是否有所在省
-                if 当前城市有所在省的话，寻找所在省下面的相应数据
-                else if 当前城市没有所在省的话，寻找当前城市下面的相应数据
-            */
-
-            // echo '<pre>';
-            $search_city_arr = [];
-            foreach ($this->city_arr_search as $key => $val) {
-                foreach ($val as $key2 => $val2) {
-                    if ($val2['city'] == $data['city'] && $val2['sheng_id'] != '') {
-                        // 普通城市
-                        $search_city_arr[] = array_column($this->city_arr_search[$val2['sheng_id']], 'city');
-                    } else if ($val2['city'] == $data['city'] && $val2['sheng_id'] == '') {
-                        // 直辖市
-                        $search_city_arr[] = $val2['city'];
-                    }
-                }
-            }
-
-            if (is_array($search_city_arr[0])) {
-                $search_city_whereIn = implode(',', $search_city_arr[0]);
-            } else {
-                $search_city_whereIn = $search_city_arr[0];
-            }
-
-
-        } else if ($data['city'] == '全国') {
-            // 全国
-            $search_where[] = ['search_city', '<>', ''];
-        }
-
-        if ($data['serve_type_id'] != 0 && $data['serve_type_id'] != 1) {
-            // 普通类型
-            $search_where[] = ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"];
-        } else if ($data['serve_type_id'] == 1) {
-            // 线上
-            $search_city_whereIn = [];
-            // $search_where[] = ['hold_mode', '=', "1"];
-            if ($data['city'] == '全国') {
-                $search_whereOr[] = ['hold_mode', '=', "1"];
-                // $search_whereOr[] = ['search_city','=',$data['city']];
-            } else {
-                $search_where[] = ['search_city', '=', $data['city']];
-                $search_whereOr[] = ['hold_mode', '=', "1"];
-            }
-        } else if ($data['serve_type_id'] == 0) {
-            $search_where = [];
-            $search_whereOr = [];
-            $search_city_whereIn = [];
-            $search_where[] = ['search_city', '=', $data['city']];
-            $search_whereOr[] = ['hold_mode', '=', "1"];
-            // 全部
-            // $search_where[] = ['serve_type_id', '<>', ''];
-        } else {
-            $search_where[] = ['serve_type_id', '<>', ''];
-        }
-
-        $active_list = Db::name('act_serve')
-            ->field('id,title,price,pic,begin_time,end_time,hold_mode,search_city as city')
-            ->order('sort desc')
-            ->where([['status', '=', 1], ['is_hot', '=', 1]])
-            ->where($search_where);
-        if (!empty($search_whereOr)) {
-            $active_list->whereOr($search_whereOr);
-        }
-        if (!empty($search_city_whereIn)) {
-            $active_list->whereIn('search_city', $search_city_whereIn);
-        }
-        $active_list = $active_list->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
-            ->toArray();
-
-        if (!empty($active_list['data'])) {
-            foreach ($active_list['data'] as $key => &$val) {
-                $val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
-                $val['end_time'] = date('m-d H:i', $val['end_time']);
-            }
-        }
-
-        array_unshift($active_types, ['id' => 0, 'title' => '全部'], ['id' => 1, 'title' => '线上']);
-        $return['active_types'] = $active_types;
-        $return['banners'] = $banners;
-        $return['active_list'] = $active_list;
-        return json_msg(0, '成功', $return);
-    }
-
-    /**
-     * @Author   JFY
-     * @DateTime 2020-05-13
-     * @Describe [活动详情]
-     * @Purpose  [purpose]
-     * @param    [param]
-     * @return   [type]     [description]
+     * @throws \think\Exception
+     * @throws \think\exception\DbException
+     * @throws db\exception\DataNotFoundException
+     * @throws db\exception\ModelNotFoundException
      */
     public function activity_detail()
     {
@@ -288,10 +168,6 @@ class Index extends Common
     }
 
     /**
-     * @Author   JFY
-     * @DateTime 2020-05-11
-     * @Describe [describe]
-     * @Purpose  [purpose]
      * @param    [userId 用户id 必填]
      * @param    [orderType 分享列表|收藏列表 (share|collection) 必填]
      * @param    [price 价格 选填]
@@ -327,10 +203,6 @@ class Index extends Common
     }
 
     /**
-     * @Author   JFY
-     * @DateTime 2020-05-11
-     * @Describe [分享]
-     * @Purpose  [purpose]
      * @param    [param]
      * @return   [type]     [description]
      */
@@ -347,10 +219,6 @@ class Index extends Common
     }
 
     /**
-     * @Author   JFY
-     * @DateTime 2020-05-11
-     * @Describe [收藏]
-     * @Purpose  [purpose]
      * @param    [param]
      * @return   [type]     [description]
      */
@@ -399,10 +267,6 @@ class Index extends Common
     }
 
     /**
-     * @Author   JFY
-     * @DateTime 2020-05-11
-     * @Describe [想参加]
-     * @Purpose  [purpose]
      * @param    [param]
      * @return   [type]     [description]
      */
@@ -540,131 +404,6 @@ class Index extends Common
         return json_msg(0, '成功', $list);
     }
 
-    /**
-     * @Author   JFY
-     * @DateTime 2020-05-18
-     * @Describe [搜索列表]
-     * @Purpose  [purpose]
-     * @param    [param]
-     * @return   [type]     [description]
-     */
-    public function search_list()
-    {
-        $data = input();
-        $page = empty($data['page']) ? 1 : $data['page'];
-
-        // 活动类型
-        $active_types = Db::name('act_serve_type')->field('id,title')->order('sort desc')->where('status', '=', 1)->select();
-
-        $where[] = ['status', '=', 1];
-
-        $order = $data['order'];
-        $hold_mode = $data['hold_mode'];
-        $serve_type_id = $data['serve_type_id'];
-        $keywords = $data['keywords'];
-
-        // 默认的排序是按照sort降序排列
-        // if( !empty(explode('__',$order)) ){
-        //     $order = implode(' ',explode('__',$order));
-        // }else{
-        //     $order = 'sort desc';
-        // }
-
-        // if( !empty($hold_mode) ){
-        //     $where[] = array('hold_mode','=',$hold_mode);
-        // }else{
-        //     $where[] = array('hold_mode','<>','');
-        // }
-
-        // if( $serve_type_id != 0 ){
-        //     $search_where[] = array ('serve_type_id', 'like', "%" . $serve_type_id . "%" );
-        // }else{
-        //     $search_where[] = array('serve_type_id','<>','');
-        // }
-
-        if (!empty($keywords)) {
-            $search_where[] = array('title', 'like', "%" . $keywords . "%");
-        }
-
-        // 热门活动
-        if ((!empty($data['city']) && $data['city'] != '全国') || $data['serve_type_id'] != 1) {
-            /*
-                去寻找当前城市是否有所在省
-                if 当前城市有所在省的话，寻找所在省下面的相应数据
-                else if 当前城市没有所在省的话，寻找当前城市下面的相应数据
-            */
-
-            // echo '<pre>';
-            $search_city_arr = [];
-            foreach ($this->city_arr_search as $key => $val) {
-                foreach ($val as $key2 => $val2) {
-                    if ($val2['city'] == $data['city'] && $val2['sheng_id'] != '') {
-                        // 普通城市
-                        $search_city_arr[] = array_column($this->city_arr_search[$val2['sheng_id']], 'city');
-                    } else if ($val2['city'] == $data['city'] && $val2['sheng_id'] == '') {
-                        // 直辖市
-                        $search_city_arr[] = $val2['city'];
-                    }
-                }
-            }
-
-            if (is_array($search_city_arr[0])) {
-                $search_city_whereIn = implode(',', $search_city_arr[0]);
-            } else {
-                $search_city_whereIn = $search_city_arr[0];
-            }
-
-
-        } else if ($data['city'] == '全国') {
-            // 全国
-            $search_where[] = ['search_city', '<>', ''];
-        }
-
-        if ($data['serve_type_id'] != 0 && $data['serve_type_id'] != 1) {
-            // 普通类型
-            $search_where[] = ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"];
-        } else if ($data['serve_type_id'] == 1 || $data['serve_type_id'] == 0) {
-            // 线上
-            $search_where[] = ['hold_mode', '=', "1"];
-            if ($data['city'] != '全国') {
-                $search_whereOr[] = ['search_city', '=', $data['city']];
-            }
-        } else {
-            // 全部
-            $search_where[] = ['serve_type_id', '<>', ''];
-        }
-
-        $active_list = Db::name('act_serve')
-            ->field('id,title,begin_time,end_time,city,price,pic,serve_type_id,city,address,search_serve_type as serve_type,hold_mode')
-            ->order($order)
-            ->where($search_where);
-        if (!empty($search_whereOr)) {
-            $active_list->whereOr($search_whereOr);
-        }
-        if (!empty($search_city_whereIn)) {
-            $active_list->whereIn('search_city', $search_city_whereIn);
-
-        }
-        $active_list = $active_list->paginate(array('list_rows' => config('pageSize'), 'page' => $page))
-            ->toArray();
-
-        if (!empty($active_list['data'])) {
-            foreach ($active_list['data'] as $key => &$val) {
-                $val['pic'] = config('admin_path') . $val['pic'];
-                $val['begin_time'] = date('m-d H:i', $val['begin_time']);
-                $val['end_time'] = date('m-d H:i', $val['end_time']);
-                if (!empty($val['city'])) {
-                    $val['city'] = $this->city_arr[$val['city']]['city'];
-                }
-            }
-        }
-
-        array_unshift($active_types, ['id' => 0, 'title' => '全部']);
-        $return['active_types'] = $active_types;
-        $return['active_list'] = $active_list;
-        return json_msg(0, '成功', $return);
-    }
-
 
     /**
      * oo
@@ -702,13 +441,13 @@ class Index extends Common
 
         }
 
-        $onlineParam = array_merge($param, array(['hold_mode', '=', 1]));
+        $onlineParam = array_merge($param, array(['hold_mode', 'in', '1,3']));
 
         if (1 < $data['serve_type_id']) {
             // !0 1 当前城市,当前类型的所有线下
             $add_where = array(
                 ['serve_type_id', 'like', "%" . $data['serve_type_id'] . "%"],
-                ['hold_mode', '=', 2],
+                ['hold_mode', 'in', '2,3'],
             );
             $where = array_merge($param, $add_where, $search_city_whereIn);
 

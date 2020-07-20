@@ -10,7 +10,7 @@ use app\admin\model\Serve as ServeModel;
 class Serve extends Common
 {
 
-    private $serve_type_id_array, $city_json, $city_arr = [];
+    private $serve_type_id_array, $city_arr = [];
 
     public function initialize()
     {
@@ -52,8 +52,6 @@ class Serve extends Common
      */
     public function index()
     {
-
-
         if (request()->isPost()) {
             // $page = input('page') ? input('page') : 1;
             $key = input('post.key');
@@ -84,7 +82,7 @@ class Serve extends Common
 
             if (!empty(input('post.organize'))) $where[] = ['organize_id', '=', input('post.organize')];
             if (!empty(input('post.serve_category'))) $where[] = ['serve_category_id', '=', input('post.serve_category')];
-            if (in_array(input('post.hot'), ['0', '1']) ) $where[] = ['is_hot', '=', input('post.hot')];
+            if (in_array(input('post.hot'), ['0', '1'])) $where[] = ['is_hot', '=', input('post.hot')];
             if (in_array(input('post.status'), ['0', '1'])) $where[] = ['status', '=', input('post.status')];
 
 
@@ -255,7 +253,13 @@ class Serve extends Common
     public function Dels()
     {
         $arr = input('post.arr');
-        $res = ServeModel::destroy($arr);
+        $delete = input('post.delete') ? true : false;
+        if ($delete) {
+            $res = ServeModel::withTrashed()->where(id, 'in', $arr)->delete(true);
+        }else{
+            $res = ServeModel::destroy($arr, $delete);
+        }
+
         if ($res) {
             return $result = ['code' => 1, 'msg' => '删除成功!'];
         } else {
@@ -369,6 +373,37 @@ class Serve extends Common
             array('create_time', '报名时间'),
         );
         exportExcel('活动报名数据', $xlsCell, $data);
+    }
+
+
+    public function garbage()
+    {
+        $pageSize = input('limit') ? input('limit') : config('pageSize');
+
+        if (request()->isPost()) {
+            $page = input('page') ? input('page') : 1;
+            $list = ServeModel::onlyTrashed()->order('id desc')->paginate(array('list_rows' => $pageSize, 'page' => $page))->toArray();
+
+            foreach ($list['data'] as $key => &$value) {
+                $value['page'] = $page;
+            }
+
+            return ['code' => 0, 'msg' => '获取成功!', 'data' => $list['data'], 'count' => $list['total'], 'rel' => $page, 'page' => $page];
+        }
+
+        $this->assign('page', input('page'));
+        return $this->fetch();
+    }
+
+    public function huifu($id)
+    {
+        $model = new ServeModel();
+        $res = $model->restore(['id' => $id]);
+        if ($res) {
+            return ['code' => 1, 'msg' => '恢复成功!'];
+        } else {
+            return ['code' => 0, 'msg' => '恢复失败!'];
+        }
     }
 
 }

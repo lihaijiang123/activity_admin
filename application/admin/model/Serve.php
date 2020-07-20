@@ -3,6 +3,7 @@
 namespace app\admin\model;
 
 use think\Model;
+use think\model\concern\SoftDelete;
 
 class Serve extends Model
 {
@@ -11,6 +12,8 @@ class Serve extends Model
     // 主键
     protected $pk = 'id';
 
+    use SoftDelete;
+    protected $deleteTime = 'delete_time';
 
     protected $autoWriteTimestamp = 'int';
 //    protected $autoWriteTimestamp='true';//时间戳

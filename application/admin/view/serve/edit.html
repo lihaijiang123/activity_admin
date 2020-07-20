@@ -183,7 +183,7 @@
             <div class="layui-input-12">
                 <div class="layui-input-1">
                     <select name="country" lay-filter="required" id="country">
-                        <option value="">国家类型{$info_array['country']}</option>
+                        <option value="">国家类型</option>
                         <option value="1" {if $info_array['country'] == '1'}selected{/if}> 国内</option>
                         <option value="2" {if $info_array['country'] == '2'}selected{/if}> 国外</option>
                     </select>
@@ -226,8 +226,7 @@
                 <input type="hidden" class="pic" name="pic">
                 <div class="layui-input-block">
                     <div class="layui-upload">
-                        <button type="button" class="layui-btn layui-btn-primary uploadImg"><i
-                                class="icon icon-upload3"></i>点击上传
+                        <button type="button" class="layui-btn layui-btn-primary uploadImg"><i class="icon icon-upload3"></i>点击上传
                         </button>
                         <div class="layui-upload-list">
                             <div class="file-iteme">
@@ -267,36 +266,42 @@
             </div>
         </div>
 
+        <div class="layui-form-item">
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">是否显示</label>
+                <div class="layui-input-6">
+                    <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==2" ng-value="2" title="否">
+                    <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==1" ng-value="1" title="是">
+                </div>
+            </div>
+
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">开启报名</label>
+                <div class="layui-input-6">
+                    <input type="radio" name="open" ng-model="field.open" ng-checked="field.open==0" ng-value="0" title="否">
+                    <input type="radio" name="open" ng-model="field.open" ng-checked="field.open==1" ng-value="1" title="是">
+                </div>
+            </div>
+
+        </div>
 
         <div class="layui-form-item">
-            <div class="layui-inline layui-col-md3">
-                <label class="layui-form-label">是否显示</label>
-                <div class="layui-input-5">
-                    <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==2" ng-value="2"
-                           title="否">
-                    <input type="radio" name="status" ng-model="field.status" ng-checked="field.status==1" ng-value="1"
-                           title="是">
-                </div>
-            </div>
 
-            <div class="layui-inline layui-col-md3">
-                <label class="layui-form-label">是否推荐到首页</label>
-                <div class="layui-input-5">
-                    <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==2" ng-value="2"
-                           title="否">
-                    <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==1" ng-value="1"
-                           title="是">
+            <div class="layui-inline layui-col-md5">
+                <label class="layui-form-label">推荐首页</label>
+                <div class="layui-input-6">
+                    <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==2" ng-value="2" title="否">
+                    <input type="radio" name="is_hot" ng-model="field.is_hot" ng-checked="field.is_hot==1" ng-value="1" title="是">
                 </div>
             </div>
 
 
-            <div class="layui-inline layui-col-md3">
+            <div class="layui-inline layui-col-md5">
                 <label class="layui-form-label">举办方式</label>
-                <div class="layui-input-5">
-                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==2"
-                           ng-value="2" title="线下">
-                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==1"
-                           ng-value="1" title="线上">
+                <div class="layui-input-6">
+                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==2" ng-value="2" title="线下">
+                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==1" ng-value="1" title="线上">
+                    <input type="radio" name="hold_mode" ng-model="field.hold_mode" ng-checked="field.hold_mode==3" ng-value="3" title="线上+线下">
                 </div>
             </div>
         </div>

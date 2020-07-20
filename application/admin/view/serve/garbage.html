@@ -1,0 +1,383 @@
+{include file="common/head"/}
+<style>
+    .sele {
+        height: 37px;
+        width: 200px;
+        border: 1px solid #E6E6E6;
+    }
+</style>
+<div class="admin-main layui-anim layui-anim-upbit">
+    <input type="hidden" name="pageId" value="{$pageId}" id='pageId'>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>活动回收列表</legend>
+    </fieldset>
+
+    <!-- 不需要 -->
+    <div class="demoTable" style="display: none">
+        <div class="layui-inline">
+            <input class="layui-input" name="key" id="key" placeholder="{:lang('pleaseEnter')}活动标题" autocomplete="off">
+        </div>
+        <div class="layui-inline">
+            <select name="serve_type_id" lay-filter="serve_type_id" id="serve_type_id" lay-verify="required"
+                    xm-select="serve_type_id" xm-select-max="1" xm-select-search="">
+                <option value="">请选择所属活动类型</option>
+                {foreach $serve_type_id_array as $key=>$val }
+                <option value="{$val.id}"> {$val.title} </option>
+                {/foreach}
+            </select>
+        </div>
+
+        <div class="layui-inline">
+            <select name="city" lay-filter="city" lay-verify="required" id="city" xm-select="city" xm-select-max="1"
+                    xm-select-search="">
+                <option value="">请选择举办城市</option>
+                {foreach $city_arr as $key=>$val }
+                <option value="{$val.id}"> {$val.city} </option>
+                {/foreach}
+            </select>
+        </div>
+
+        <!--活动主办方-->
+        <div class="layui-inline">
+            <select name="organize" lay-filter="organize" lay-verify="required" id="organize" xm-select="organize" xm-select-max="1"
+                    xm-select-search="">
+                <option value="">请选择活动主办方</option>
+                {foreach $organize as $key=>$val }
+                <option value="{$val.id}"> {$val.name} </option>
+                {/foreach}
+            </select>
+        </div>
+
+        <!--活动类别-->
+        <div class="layui-inline">
+            <select name="serve_category" lay-filter="serve_category" lay-verify="required" id="serve_category" xm-select="serve_category" xm-select-max="1"
+                    xm-select-search="">
+                <option value="">请选择活动类别</option>
+                {foreach serve_category_id_array as $key=>$val }
+                <option value="{$val.id}"> {$val.title} </option>
+                {/foreach}
+            </select>
+        </div>
+        <!--推荐-->
+        <!--<div class="layui-inline">
+            <select name="hot" lay-filter="hot" lay-verify="required" id="hot" xm-select="hot" xm-select-max="1"
+                    xm-select-search="">
+                <option value="">请选择推荐</option>
+                <option value="1"> 推荐 </option>
+                <option value="0"> 不推荐 </option>
+            </select>
+        </div>-->
+
+        <!--显示-->
+        <!--<div class="layui-inline">
+            <select name="status" lay-verify="required" xm-select="status" xm-select-max="1" xm-select-search="">
+                <option value="">请选择显示</option>
+                <option value="1"> 显示 </option>
+                <option value="0"> 不显示 </option>
+            </select>
+        </div> -->
+
+
+
+
+
+        <button class="layui-btn" id="search" data-type="reload">搜索</button>
+        <a href="{:url('garbage')}" class="layui-btn">显示全部</a>
+
+<!--        <a href="{:url('execl')}" class="layui-btn layui-btn-warm">导出所有活动报名数据</a>-->
+    </div>
+    <!-- 不需要 -->
+
+
+    <table class="layui-table" id="list" lay-filter="list"></table>
+
+</div>
+
+<!-- 需要（编辑的方法名称 主键id 的名称 start-->
+<script type="text/html" id="action">
+<!--    <a class="layui-btn layui-btn-xs" id="edit_btn" data-page="{{d.page}}" data-id="{{d.id}}">编辑</a>-->
+<!--    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>-->
+<!--    <a class="layui-btn layui-btn-warm layui-btn-xs" href="{:url('execl')}?id={{d.id}}">导出报名数据</a>-->
+    <a class="layui-btn layui-btn-xs"  lay-event="restore" data-page="{{d.page}}" data-id="{{d.id}}">恢复</a>
+</script>
+<!-- 需要（编辑的方法名称 主键id 的名称 end-->
+
+
+
+<!-- 需要 添加的方法名称 按钮的的title -->
+<script type="text/html" id="topBtn">
+<!--    <a class="layui-btn  layui-btn-sm" id="add_btn">添加</a>-->
+    <a class="layui-btn  layui-btn-sm" id="del_btn">批量删除</a>
+
+</script>
+<!-- 需要 添加的方法名称 按钮的的title -->
+
+
+
+<script type="text/html" id="pic"> <img src="{{d.pic}}" /></script>
+
+<script type="text/html" id="status"><input type="checkbox" name="status" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="status" {{ d.status == 1 ? "checked" : "" }}></script>
+
+
+<script type="text/html" id="hold_mode"><input type="checkbox" name="hold_mode" value="{{d.id}}" lay-skin="switch" lay-text="线上|线下" lay-filter="hold_mode" {{ d.hold_mode == 1 ? "checked" : "" }}></script>
+
+<script type="text/html" id="is_hot"><input type="checkbox" name="is_hot" value="{{d.id}}" lay-skin="switch" lay-text="是|否" lay-filter="is_hot" {{ d.is_hot == 1 ? "checked" : "" }}></script>
+
+
+
+{include file="common/foot"/}
+
+<link href="/static/common/css/formSelects-v4.css" rel="stylesheet" />
+<script>
+    layui.config({
+        base: '/static/common/js/' //此处路径请自行处理, 可以使用绝对路径
+    }).extend({
+        formSelects: 'formSelects-v4'
+    });
+
+    layui.use(['table', 'form', 'formSelects'], function () {
+
+        var table = layui.table,
+            form = layui.form,
+            $ = layui.jquery;
+
+        var pageId = $('#pageId').val();
+
+        var formSelects = layui.formSelects;
+
+        formSelects.btns('serve_type_id', []);
+        formSelects.btns('city', []);
+        formSelects.btns('organize', []);
+        formSelects.btns('serve_category', []);
+        formSelects.btns('hot', []);
+        formSelects.btns('status', []);
+
+
+
+        var exportData = '';
+        var tableIn = table.render({
+            id: 'user',
+            elem: '#list',
+            url: '{:url("garbage")}',
+            method: 'post',
+            toolbar: '#topBtn',
+            totalRow: true,
+            page: { curr: pageId },
+            cols: [
+                [
+                    {checkbox:true,fixed: true},
+
+                    {
+                        field: 'id',
+                        title: 'ID',
+                        width: 80
+                    },
+
+                    {
+                        width: 80,
+                        align: 'center',
+                        title: '操作',
+                        toolbar: '#action'
+                    },
+                    // {
+                    //     field: 'status',
+                    //     align: 'center',
+                    //     title: '显示',
+                    //     width: 80,
+                    //     toolbar: '#status'
+                    // },
+                    //
+                    //
+                    // {
+                    //     field: 'is_hot',
+                    //     align: 'center',
+                    //     title: '推荐',
+                    //     width: 80,
+                    //     toolbar: '#is_hot'
+                    // },
+
+
+                    {
+                        field: 'title',
+                        title: '标题',
+                        width: 200
+                    },
+
+                    {
+                        field: 'real_time',
+                        title: '时间',
+                        width: 250
+                    },
+
+
+
+                    {
+                        field: 'search_city',
+                        title: '地点',
+                        width: 100
+                    },
+
+
+                    {
+                        field: 'serve_type_id',
+                        title: '类型',
+                        width: 150
+                    },
+
+                    {
+                        field: 'serve_category_id',
+                        title: '类别',
+                        width: 150
+                    },
+
+                    {
+                        field: 'start',
+                        title: '发布人',
+                        width: 100
+                    },
+
+                    {
+                        field: 'sign_num',
+                        title: '报名',
+                        width: 100
+                    },
+
+                    {
+                        field: 'see_num',
+                        title: '浏览',
+                        width: 100
+                    },
+                    {
+                        field: 'cang_num',
+                        title: '收藏',
+                        width: 100
+                    },
+                    {
+                        field: 'fx_num',
+                        title: '分享',
+                        width: 100
+                    },
+                    {
+                        field: 'join_num',
+                        title: '想(已)参加',
+                        width: 100
+                    },
+
+                ]
+            ],
+            limit: 10, //每页默认显示的数量
+            done: function (res, curr, count) {
+                exportData = res.data; //获取表格中的数据集合。
+            },
+        });
+
+        //搜索
+        $('#search').on('click', function () {
+            var key = $('#key').val();
+            // 活动类型
+            var serve_type_id = formSelects.value('serve_type_id').length == 0 ? '' : formSelects.value('serve_type_id')[0].name;
+            // 城市
+            var city = formSelects.value('city').length == 0 ? '' : formSelects.value('city')[0].name;
+            // 主办方
+            var organize = formSelects.value('organize').length == 0 ? '' : formSelects.value('organize')[0].value;
+            // 类别
+            var serve_category = formSelects.value('serve_category').length == 0 ? '' : formSelects.value('serve_category')[0].value;
+
+            if ($.trim(key) === '' && $.trim(serve_type_id) === '' && $.trim(city) === '' && $.trim(organize) === '' && $.trim(serve_category) === '' ) {
+                layer.msg('{:lang("pleaseEnter")}关键字', {
+                    icon: 0
+                });
+                return false;
+            }
+
+            tableIn.reload({
+                page: {
+                    page: 1
+                },
+                where: {
+                    key: key,
+                    serve_type_id: serve_type_id,
+                    city: city,
+                    organize: organize,
+                    serve_category: serve_category,
+                    hot: hot,
+                    status: status
+                }
+            });
+        });
+
+        table.on('tool(list)', function (obj) {
+            if (obj.event === 'restore') {
+                var id = $(this).data('id');
+
+                layer.confirm('您确定要恢复这个活动吗？', function (index) {
+                    var loading = layer.load(1, {
+                        shade: [0.1, '#fff']
+                    });
+                    $.post('./huifu.html', {
+                        id: id
+                    }, function (res) { //主键
+                        layer.close(loading);
+                        if (res.code === 1) {
+                            obj.del();
+                            layer.msg(res.msg, {
+                                time: 1000,
+                                icon: 1
+                            });
+                        } else {
+                            layer.msg('操作失败！', {
+                                time: 1000,
+                                icon: 2
+                            });
+                        }
+                    });
+                    layer.close(index);
+                });
+            }
+        })
+
+
+        //批量删除
+        $("#del_btn").on('click',function(){
+            //获取选中状态            
+            var checkStatus = table.checkStatus('user');
+
+            //获取选中数量
+            var selectCount = checkStatus.data.length;
+            if(selectCount == 0){
+                layer.msg('批量删除至少选中一项数据',function(){});
+                return false;
+            }
+            layer.confirm('真的要删除选中的项吗？',function(index){
+                layer.close(index);
+                index = layer.load(1, {shade: [0.1,'#fff']});
+
+                var arr=[];
+                for(var i=0; i<selectCount; i++){
+                    arr[i] =  checkStatus.data[i].id;
+                }
+
+                $.post("{:url('Dels')}", {arr: arr, delete: true}, function (res) {
+                    layer.close(index);
+                    if (res.code === 1) {
+                        layer.msg(res.msg, {
+                            time: 1000,
+                            icon: 1
+                        });
+                        tableIn.reload();
+                    } else {
+                        layer.msg('操作失败！', {
+                            time: 1000,
+                            icon: 2
+                        });
+                    }
+                })
+
+            });
+        });
+
+    });
+</script>
+</body>
+
+</html>
